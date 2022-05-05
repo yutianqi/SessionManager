@@ -1,0 +1,71 @@
+[
+    {
+        "nodeName": "L1-PT",
+        "nodeType": "directory",
+        "nodeId": "1",
+        "childNodes": [
+            {
+                "nodeName": "L2-global",
+                "nodeType": "directory",
+                "nodeId": "2",
+                "childNodes": [
+                    {
+                        "nodeName": "L3-Master",
+                        "nodeType": "directory",
+                        "nodeId": "2",
+                        "childNodes": [
+                            {
+                                "nodeName": "L4-Master0_240",
+                                "nodeType": "session",
+                                "nodeId": "2",
+                                "ip": "192.168.0.240",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Fusionsolar@h00356474"
+                            },
+                            {
+                                "nodeName": "L4-Master1_207",
+                                "nodeType": "session",
+                                "nodeId": "2",
+                                "ip": "192.168.0.207",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Fusionsolar@h00356474"
+                            }
+                        ]
+                    },
+                    {
+                        "nodeName": "L3-Disb",
+                        "nodeType": "directory",
+                        "nodeId": "3",
+                        "childNodes": [
+                            {
+                                "nodeName": "L4-Disb1_10",
+                                "nodeType": "session",
+                                "nodeId": "2",
+                                "ip": "192.168.0.10",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Fusionsolar@h00356474"
+                            },
+                            {
+                                "nodeName": "L4-Disb2_11",
+                                "nodeType": "session",
+                                "nodeId": "2",
+                                "ip": "192.168.0.11",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Fusionsolar@h00356474"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
+
+
+
+
+
