@@ -12,6 +12,7 @@ class ArgUtils():
     # parser.add_argument("-n", "--nodeId", type=int)
     parser.add_argument("-n", "--nodeId")
     parser.add_argument("-m", "--mode", default="open", choices=['ls', 'manage', 'open'], help="work mode")
+    parser.add_argument("-v", action='store_true', default=False, help="detail")
 
     # parser.add_argument("-o", "--only", action='store_true', default=False, help="only run once")
 
@@ -36,10 +37,5 @@ class ArgUtils():
         return -1
 
     @classmethod
-    def isOnlyOnce(cls):
-        return cls.args.only
-
-
-    @classmethod
-    def isForceRun(cls):
-        return cls.args.force
+    def isDetail(cls):
+        return cls.args.v

@@ -1,0 +1,10 @@
+{
+    "protocol": "ssh",
+    "host": "ossuser@119.3.215.153",
+    "password": "Huawei@Cloud8#",
+    "jump": {
+        "protocol": "ssh",
+        "host": "ossadm@127.0.0.1",
+        "password": "Huawei@Cloud8#"
+    }
+}
