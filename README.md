@@ -1,7 +1,12 @@
 
 
 ## TODO
-1. ssload -f <filename>
+1. ssm 
+   ssm -a <nodeName> <ip> <port> <username> <password>
+   ssm -a -f <filename>
+   ssm -d <nodeId>
+   
+2. 
 从csv文件生成：
 a. profile配置
 b. 登录配置
@@ -78,8 +83,8 @@ c. Session层级配置json
         }
     ]
     ```
-1. ssls：读取Session层级配置json，列出Session分组列表，默认全量展开
 
+1. ssls：读取Session层级配置json，列出Session分组列表，默认全量展开
     ```
     └── 1> PT1 
         └── 2> region1
@@ -94,7 +99,7 @@ c. Session层级配置json
                 └── 21> Other1_21
     ```
    ssls | grep
-   ssls 6           显示指定节点下的节点列表
+   ssls -n 6        显示指定节点下的节点列表
 
    ssls -l <n>      展开到第n层
    ssls -a          平铺展示
