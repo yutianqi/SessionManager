@@ -18,8 +18,9 @@ def main():
     workMode = ArgUtils.getWorkMode()
     sessions = loadSessions()
 
+    # ssmgr.py -m ls 
     if "ls" == workMode:
-        # ssmgr -m ls -n 6          显示指定节点下的节点列表
+        # sl -n 6                   显示指定节点下的节点列表
         if ArgUtils.getNodeId() != -1:
             # print("expect Id=" + str(ArgUtils.getNodeId()))
             node = getNode(sessions, ArgUtils.getNodeId())
@@ -32,28 +33,38 @@ def main():
         else:
             targetSessions = sessions
 
-        # ssls -v                   包含节点IP信息
+        # sl -v                     包含节点IP信息
         funcName = getContent
         if ArgUtils.isDetail():
             funcName = getDetailContent
 
-        # ssls -l <n>               展开到第n层
-        # ssls -a                   平铺展示
+        # sl -l <n>                 展开到第n层
+        # sl -a                     平铺展示
         treePrint(targetSessions, "", funcName)
 
+    # ssmgr -m manage
     if "manage" == workMode:
+        # sm -a <nodeName> <ip> <port> <username> <password>
+        # sm -a -f <filename>
+        # sm -d <nodeId>
         pass
 
     if "open" == workMode:
+        # so -ns 47,48-50
         if ArgUtils.getNodeIds():
             nodeIds = getNodeIds(ArgUtils.getNodeIds())
             # print(nodeIds)
             (NODES, ids) = getNodes(sessions, nodeIds)
+        if ids:
+            print("找不到节点：" + str(ids))
+
+        # so -ns 47,48-50 -w：新窗口打开
+        # so -ns 47,48-50 -t：新标签打开
+
         if NODES:
             # iterm2.run_until_complete(openSession)
             for node in NODES:
                 print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")
-
 
 def getNodes(sessions, ids):
     nodes = []
