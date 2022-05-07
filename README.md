@@ -147,3 +147,9 @@ https://github.com/lilongen/xshell-to-iterm2
 https://blog.csdn.net/weixin_46380571/article/details/108095237
 
 
+# TODO
+chmod 755 /Users/yutianqi/Code/Github/SessionManager/ssmgr.py
+chmod 755 /Users/yutianqi/Code/Github/SessionManager/jump.exp
+
+
+

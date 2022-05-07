@@ -11,7 +11,7 @@ class ArgUtils():
     # group = parser.add_mutually_exclusive_group(required=True)
     # parser.add_argument("-n", "--nodeId", type=int)
     parser.add_argument("-n", "--nodeId")
-    parser.add_argument("-ns", "--nodeIds", default="")
+    parser.add_argument("-s", "--nodeIds", default="")
     parser.add_argument("-m", "--mode", default="open", choices=['ls', 'manage', 'open'], help="work mode")
     parser.add_argument("-v", action='store_true', default=False, help="detail")
 

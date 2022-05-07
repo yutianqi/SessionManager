@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #encoding=utf8
 
+import profile
 import sys
 import json
 import iterm2
@@ -62,9 +63,11 @@ def main():
         # so -ns 47,48-50 -t：新标签打开
 
         if NODES:
-            # iterm2.run_until_complete(openSession)
+            iterm2.run_until_complete(openSession)
+            '''
             for node in NODES:
                 print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")
+            '''
 
 def getNodes(sessions, ids):
     nodes = []
@@ -124,7 +127,7 @@ def getParamsFromNode(node):
 
 
 def loadSessions():
-    with open("sessions.json") as f:
+    with open(os.path.join(WORK_PATH, "sessions.json")) as f:
         lines = f.readlines()
         sessions = json.loads("".join(lines))
     return sessions
@@ -162,29 +165,38 @@ def getDetailContent(node):
 async def openSession(connection):
     app = await iterm2.async_get_app(connection)
     window = app.current_window
-    if not window:
+
+    # if not window:
+    if True:
         await iterm2.window.Window.async_create(connection)
         window = app.current_window
 
+    firstSession = True
     for item in NODES:
-        print("createTab" + item.get('nodeName'))
-        await window.async_create_tab(profile="Copy of Default")
+        if not firstSession:
+            await window.async_create_tab()
+            # await window.async_create_tab(profile="Copy of Default")
+        else:
+            firstSession = False
         session = app.current_terminal_window.current_tab.current_session
+        profile = iterm2.LocalWriteOnlyProfile()
+
         # Change colour of tab
-        change = iterm2.LocalWriteOnlyProfile()
-        colour = iterm2.Color(102, 178, 255)
-        change.set_tab_color(colour)
-        change.set_use_tab_color(True)
+        # colour = iterm2.Color(102, 178, 255)
+        # change.set_tab_color(colour)
+        # change.set_use_tab_color(True)
+        
         # Change colour of badge - text embedded into screen
-        colour_badge = iterm2.Color(255, 255, 51, 129)
-        change.set_badge_color(colour_badge)
         # Pull name from csv line and use for badge
-        change.set_badge_text(item.get('nodeName'))
-        await session.async_set_profile_properties(change)
+        colour_badge = iterm2.Color(255, 255, 51, 129)
+        profile.set_badge_color(colour_badge)
+        profile.set_badge_text(item.get('nodeName'))
+
+        await session.async_set_profile_properties(profile)
 
         # Execute the command - could be telnet, ssh etc...
         # await session.async_send_text("ssh ossuser@" + item.get('ip') + "\n")
-        await session.async_send_text(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(item) + "\n")
+        await session.async_send_text("expect " + os.path.join(WORK_PATH, "jump.exp") + " " + getParams(item) + "\n")
 
 
 def getNodeIds(idStr):
