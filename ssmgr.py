@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#encoding=utf8
+# encoding=utf8
 
 import profile
 import sys
@@ -14,12 +14,13 @@ from arg_utils import ArgUtils
 WORK_PATH = os.path.dirname(sys.argv[0])
 NODES = []
 
+
 def main():
     global NODES
     workMode = ArgUtils.getWorkMode()
     sessions = loadSessions()
 
-    # ssmgr.py -m ls 
+    # ssmgr.py -m ls
     if "ls" == workMode:
         # sl -n 6                   显示指定节点下的节点列表
         if ArgUtils.getNodeId() != -1:
@@ -68,6 +69,7 @@ def main():
             for node in NODES:
                 print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")
             '''
+
 
 def getNodes(sessions, ids):
     nodes = []
@@ -185,7 +187,7 @@ async def openSession(connection):
         # colour = iterm2.Color(102, 178, 255)
         # change.set_tab_color(colour)
         # change.set_use_tab_color(True)
-        
+
         # Change colour of badge - text embedded into screen
         # Pull name from csv line and use for badge
         colour_badge = iterm2.Color(255, 255, 51, 129)
