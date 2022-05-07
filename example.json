@@ -1,14 +1,15 @@
 {
     "protocol": "ssh",
     "host": "root@jumpserver.domain.com:555",
-    "password": [ "pass111", "pass222" ],
+    "password": [
+        "pass111",
+        "pass222"
+    ],
     "jump": {
         "protocol": "ssh",
         "port": 2222,
         "host": "partition.domain.com",
         "sudo": true,
-        # define a command named `m` in current shell environment
-        # run m, print favourite commands
         "menu": [
             "telnet 192.168.1.1",
             "telnet 192.168.1.2",
