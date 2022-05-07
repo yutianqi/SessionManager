@@ -35,9 +35,10 @@ if [ $err -eq 1 ]; then
     exit $err
 fi
 
+# 定义参数数组
 PARAMS=()
 eval "$ret"
-#declare -p PARAMS
+# declare -p PARAMS
 
 if [ "${PARAMS[1]}" -eq 1 ]; then
   LC_CTYPE=en_US \
