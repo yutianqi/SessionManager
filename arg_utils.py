@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
-# encoding=utf8
+#encoding=utf8
 
 import argparse
-
-# from domain.work_mode import WorkMode
-
 
 class ArgUtils():
     parser = argparse.ArgumentParser(description="")
