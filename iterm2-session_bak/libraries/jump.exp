@@ -71,54 +71,11 @@ while {$idx < $argc} {
         }
 
         -re "\[#$] $" {
-          # 登陆成功
-
-          # rz sz
-          if {$zmodem} {
-            # 这句话是必须的吗？不是，为了防止把本地字符集弄乱
-            # 如何隐藏这句话？可以隐藏
-            #send "stty -echo\r"
-            send "echo \$LC_CTYPE && export LC_CTYPE=\r"
-            expect -re "\[#$] $"
-            #send "stty echo\r"
-          }
-
-          if {$passwordi > 0} { incr passwordi -1 }
-          if {$sudo} {
-            # TODO: sudo -s 也只能试 3 次，此处需要一个循环，重试完所有密码
-            send "sudo -s\r"
-            expect {
-              # -re "password for.*:|的密码："
-              "sudo] " {
-                if {$passwordi >= $passwordn} { break }
-                send "[lindex $passwords $passwordi]\r"
-                incr passwordi
-                exp_continue
-              }
-
-              "sudo: " {
-                break
-              }
-
-              -re "# $"
-            }
-            # end of expect
-          }
-
           if {$commandn} {
             foreach j $commands {
               send "$j\r"
             }
           }
-
-          if {$menn} {
-            send "m() {\rcat <<EOF\r"
-            foreach j $menu {
-              send "$j\r"
-            }
-            send "EOF\r}\r"
-          }
-
           break
         }
 

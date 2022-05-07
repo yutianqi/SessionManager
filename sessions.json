@@ -40,22 +40,124 @@
                         "nodeId": "3",
                         "childNodes": [
                             {
-                                "nodeName": "L4-Disb1_10",
+                                "nodeName": "L5-Disb3_12",
                                 "nodeType": "session",
-                                "nodeId": "45",
-                                "ip": "192.168.0.10",
+                                "nodeId": "47",
+                                "ip": "10.44.208.82",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Changeme_123",
+                                "jumper": {
+                                    "ip": "10.44.208.82",
+                                    "port": "22",
+                                    "username": "root",
+                                    "password": "Changeme_123",
+                                    "commands": [
+                                        "su - dbuser",
+                                        "ls -l"
+                                    ]
+                                }
+                            },
+                            {
+                                "nodeName": "L5-Disb4_13",
+                                "nodeType": "session",
+                                "nodeId": "48",
+                                "ip": "10.44.208.81",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Changeme_123"
+                            },
+                            {
+                                "nodeName": "L5-Disb5_14",
+                                "nodeType": "session",
+                                "nodeId": "49",
+                                "ip": "10.44.208.80",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Changeme_123"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "nodeName": "整县推进集群",
+        "nodeType": "directory",
+        "nodeId": "11",
+        "childNodes": [
+            {
+                "nodeName": "L2-global",
+                "nodeType": "directory",
+                "nodeId": "12",
+                "childNodes": [
+                    {
+                        "nodeName": "L3-Master",
+                        "nodeType": "directory",
+                        "nodeId": "142",
+                        "childNodes": [
+                            {
+                                "nodeName": "L4-Master0_240",
+                                "nodeType": "session",
+                                "nodeId": "143",
+                                "ip": "192.168.0.240",
                                 "port": "22",
                                 "username": "ossuser",
                                 "password": "Fusionsolar@h00356474"
                             },
                             {
-                                "nodeName": "L4-Disb2_11",
+                                "nodeName": "L4-Master1_207",
                                 "nodeType": "session",
-                                "nodeId": "46",
-                                "ip": "192.168.0.11",
+                                "nodeId": "144",
+                                "ip": "192.168.0.207",
                                 "port": "22",
                                 "username": "ossuser",
                                 "password": "Fusionsolar@h00356474"
+                            }
+                        ]
+                    },
+                    {
+                        "nodeName": "L3-Disb",
+                        "nodeType": "directory",
+                        "nodeId": "13",
+                        "childNodes": [
+                            {
+                                "nodeName": "L5-Disb3_12",
+                                "nodeType": "session",
+                                "nodeId": "147",
+                                "ip": "10.44.208.82",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Changeme_123",
+                                "jumper": {
+                                    "ip": "10.44.208.82",
+                                    "port": "22",
+                                    "username": "root",
+                                    "password": "Changeme_123",
+                                    "commands": [
+                                        "su - dbuser",
+                                        "ls -l"
+                                    ]
+                                }
+                            },
+                            {
+                                "nodeName": "L5-Disb4_13",
+                                "nodeType": "session",
+                                "nodeId": "148",
+                                "ip": "10.44.208.81",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Changeme_123"
+                            },
+                            {
+                                "nodeName": "L5-Disb5_14",
+                                "nodeType": "session",
+                                "nodeId": "149",
+                                "ip": "10.44.208.80",
+                                "port": "22",
+                                "username": "ossuser",
+                                "password": "Changeme_123"
                             }
                         ]
                     }

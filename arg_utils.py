@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# encoding=utf8
+#encoding=utf8
 
 import argparse
 
@@ -11,18 +11,10 @@ class ArgUtils():
     # group = parser.add_mutually_exclusive_group(required=True)
     # parser.add_argument("-n", "--nodeId", type=int)
     parser.add_argument("-n", "--nodeId")
+    parser.add_argument("-ns", "--nodeIds", default="")
     parser.add_argument("-m", "--mode", default="open", choices=['ls', 'manage', 'open'], help="work mode")
     parser.add_argument("-v", action='store_true', default=False, help="detail")
 
-    # parser.add_argument("-o", "--only", action='store_true', default=False, help="only run once")
-
-    '''
-    parser.add_argument("-o", "--only", action='store_true', default=False, help="only run once")
-
-    parser.add_argument("-f", "--force", action='store_true', default=False, help="force run")
-
-    parser.add_argument("-d", "--db", help="db file name")
-    '''
 
     args = parser.parse_args()
     
@@ -35,6 +27,10 @@ class ArgUtils():
         if cls.args.nodeId:
             return cls.args.nodeId
         return -1
+
+    @classmethod
+    def getNodeIds(cls):
+        return cls.args.nodeIds
 
     @classmethod
     def isDetail(cls):
