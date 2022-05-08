@@ -3,7 +3,6 @@ import sys
 from expect_param_support import ExpectParamSupport
 
 class Iterm2SessionSupport():
-    # WORK_PATH
     workPath = os.path.dirname(sys.argv[0])
     nodes = []
     iterm2 = None
