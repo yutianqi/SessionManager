@@ -4,17 +4,17 @@
 import profile
 import sys
 import json
-import iterm2
 import os
 
 from arg_utils import ArgUtils
-
+from iterm2_session_support import Iterm2SessionSupport
+from expect_param_support import ExpectParamSupport
 WORK_PATH = os.path.dirname(sys.argv[0])
-NODES = []
+workNodes = []
 
 
 def main():
-    global NODES
+    global workNodes
     workMode = ArgUtils.getWorkMode()
     if not workMode:
         print("\n {} Please specify the work mode first.\n".format(getRedContent("✗")))
@@ -62,19 +62,37 @@ def main():
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
             nodeIds = getNodeIds(ArgUtils.getNodeIds())
-            (NODES, ids) = getNodes(sessions, nodeIds)
+            (workNodes, ids) = getNodes(sessions, nodeIds)
+
         if ids:
-            print("找不到节点：" + str(ids))
             print("\n {} Cannot find the node [{}]\n".format(getRedContent("✗"), getRedContent(",".join(ids))))
             return
+        if workNodes:
+            if len(workNodes) == 1:
+                # 单个tab
+                # 默认     在当前tab打开
+                # -t      在新tab打开
+                # -w      在新窗口打开
+                support = Iterm2SessionSupport(WORK_PATH)
+                if ArgUtils.inNewTab():
+                    support.open(workNodes, True, False)
+                    return
+                if ArgUtils.inNewWindow():
+                    support.open(workNodes, False, True)
+                    return
+                # 在当前tab中执行
+                os.system(ExpectParamSupport.getCmd(workNodes[0]))
+            else:
+                # 多个tab
+                # 默认/-t  在当前窗口，新开多个tab打开
+                # -w      在新窗口，新开多个tab打开        
+                support = Iterm2SessionSupport(WORK_PATH)
+                support.open(workNodes, False, True)
+                return
 
-        # so -ns 47,48-50 -w：新窗口打开
-        # so -ns 47,48-50 -t：新标签打开
 
-        if NODES:
-            iterm2.run_until_complete(openSession)
             '''
-            for node in NODES:
+            for node in workNodes:
                 print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")
             '''
 
@@ -114,40 +132,6 @@ def getNode(sessions, id):
     return None
 
 
-def getParams(node):
-    (nodesCounter, params) = getParamsFromNode(node)
-    params.insert(0, str(nodesCounter))
-    params.insert(1, "1")
-    return " ".join(params)
-
-
-def getParamsFromNode(node):
-    levels = 1
-    params = [
-        "ssh",
-        node.get("username"),
-        node.get("ip"),
-        node.get("port"),
-        "0",
-        "1",
-        "1",
-        node.get("password")
-    ]
-    if node.get("commands"):
-        commands = ['"' + item + '"' for item in node.get("commands")]
-        params.append(str(len(commands)))
-        params.extend(commands)
-    else:
-        params.append("0")
-    params.append("0")
-
-    if node.get("jumper"):
-        (subLevels, subParams) = getParamsFromNode(node.get("jumper"))
-        levels += subLevels
-        params.extend(subParams)
-    return (levels, params)
-
-
 def loadSessions():
     with open(os.path.join(WORK_PATH, "sessions.json")) as f:
         lines = f.readlines()
@@ -182,43 +166,6 @@ def getDetailDisplayContent(node):
     if node.get('ip'):
         return getDisplayContent(node) + " " + node.get('ip')
     return getDisplayContent(node)
-
-
-async def openSession(connection):
-    app = await iterm2.async_get_app(connection)
-    window = app.current_window
-
-    # if not window:
-    if True:
-        await iterm2.window.Window.async_create(connection)
-        window = app.current_window
-
-    firstSession = True
-    for item in NODES:
-        if not firstSession:
-            await window.async_create_tab()
-            # await window.async_create_tab(profile="Copy of Default")
-        else:
-            firstSession = False
-        session = app.current_terminal_window.current_tab.current_session
-        profile = iterm2.LocalWriteOnlyProfile()
-
-        # Change colour of tab
-        # colour = iterm2.Color(102, 178, 255)
-        # change.set_tab_color(colour)
-        # change.set_use_tab_color(True)
-
-        # Change colour of badge - text embedded into screen
-        # Pull name from csv line and use for badge
-        colour_badge = iterm2.Color(255, 255, 51, 129)
-        profile.set_badge_color(colour_badge)
-        profile.set_badge_text(item.get('nodeName'))
-
-        await session.async_set_profile_properties(profile)
-
-        # Execute the command - could be telnet, ssh etc...
-        # await session.async_send_text("ssh ossuser@" + item.get('ip') + "\n")
-        await session.async_send_text("expect " + os.path.join(WORK_PATH, "jump.exp") + " " + getParams(item) + "\n")
 
 
 def getNodeIds(idStr):

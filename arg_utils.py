@@ -20,7 +20,8 @@ class ArgUtils():
 
     subparserOpen = subparsers.add_parser('open', help='open help')
     subparserOpen.add_argument("-s", "--nodeIds", required=True, help="Specify node ID")
-
+    subparserOpen.add_argument("-t", "--tab", action='store_true', default=False, required=False, help="")
+    subparserOpen.add_argument("-w", "--window", action='store_true', default=False, required=False, help="")
 
     subparserManage = subparsers.add_parser('add', help='manage help')
     subparserManage.add_argument('ver', help='b version help')
@@ -44,3 +45,11 @@ class ArgUtils():
     @classmethod
     def isDetail(cls):
         return cls.args.v
+
+    @classmethod
+    def inNewTab(cls):
+        return cls.args.tab
+
+    @classmethod
+    def inNewWindow(cls):
+        return cls.args.window
