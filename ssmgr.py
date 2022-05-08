@@ -72,6 +72,7 @@ def main():
             print("\n {} Cannot find the node [{}]\n".format(
                 ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join(ids))))
             return
+        workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
         if workNodes:
             support = Iterm2SessionSupport(WORK_PATH)
             if len(workNodes) == 1:
