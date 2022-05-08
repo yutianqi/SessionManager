@@ -7,8 +7,6 @@ import json
 import iterm2
 import os
 
-from platform import node
-
 from arg_utils import ArgUtils
 
 WORK_PATH = os.path.dirname(sys.argv[0])
@@ -18,31 +16,40 @@ NODES = []
 def main():
     global NODES
     workMode = ArgUtils.getWorkMode()
-    sessions = loadSessions()
+    if not workMode:
+        print("\n {} Please specify the work mode first.\n".format(getRedContent("✗")))
+        return
 
-    # ssmgr.py -m ls
-    if "ls" == workMode:
-        # sl -n 6                   显示指定节点下的节点列表
-        if ArgUtils.getNodeId() != -1:
-            # print("expect Id=" + str(ArgUtils.getNodeId()))
-            node = getNode(sessions, ArgUtils.getNodeId())
-            # print(node)
+    (total, sessions) = loadSessions()
+
+    if "list" == workMode:
+        targetSessions = sessions
+
+        targetNode = ArgUtils.getNodeId()
+        if targetNode != "-1":
+            node = getNode(sessions, targetNode)
             if node:
                 targetSessions = [node]
+                print("")
             else:
-                print("Cannot find the node[" + ArgUtils.getNodeId() + "]")
-                targetSessions = []
-        else:
-            targetSessions = sessions
+                print("\n {} Cannot find the node [{}]\n".format(getRedContent("✗"), getRedContent(targetNode)))
+                return
 
-        # sl -v                     包含节点IP信息
-        funcName = getContent
+        if len(targetSessions) == 0:
+            print("\n {} No record found...\n".format(getRedContent("✗")))
+            return
+        if targetNode == "-1":
+            print(" {} Listing {} nodes...\n".format(getGreenContent("✔"), total))
+
+        # sl -a                     平铺展示
+        # displayFuncName = getDisplayContent
+        displayFuncName = getDisplayContent
         if ArgUtils.isDetail():
-            funcName = getDetailContent
+            displayFuncName = getDetailDisplayContent
 
         # sl -l <n>                 展开到第n层
-        # sl -a                     平铺展示
-        treePrint(targetSessions, "", funcName)
+        treePrint(targetSessions, "   ", displayFuncName)
+        print("")
 
     # ssmgr -m manage
     if "manage" == workMode:
@@ -55,10 +62,11 @@ def main():
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
             nodeIds = getNodeIds(ArgUtils.getNodeIds())
-            # print(nodeIds)
             (NODES, ids) = getNodes(sessions, nodeIds)
         if ids:
             print("找不到节点：" + str(ids))
+            print("\n {} Cannot find the node [{}]\n".format(getRedContent("✗"), getRedContent(",".join(ids))))
+            return
 
         # so -ns 47,48-50 -w：新窗口打开
         # so -ns 47,48-50 -t：新标签打开
@@ -69,6 +77,18 @@ def main():
             for node in NODES:
                 print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")
             '''
+
+
+def getRedContent(content):
+    return "\033[0;31;m{}\033[0m".format(content)
+
+
+def getGreenContent(content):
+    return "\033[0;32;m{}\033[0m".format(content)
+
+
+def getYellowContent(content):
+    return "\033[0;33;m{}\033[0m".format(content)
 
 
 def getNodes(sessions, ids):
@@ -132,7 +152,7 @@ def loadSessions():
     with open(os.path.join(WORK_PATH, "sessions.json")) as f:
         lines = f.readlines()
         sessions = json.loads("".join(lines))
-    return sessions
+    return (sessions.get("total"), sessions.get("nodes"))
 
 
 def treePrint(nodes, prefix, func):
@@ -153,15 +173,15 @@ def treePrint(nodes, prefix, func):
             treePrint(node.get('childNodes'), next, func)
 
 
-def getContent(node):
-    return node.get('nodeId') + "> " + node.get('nodeName')
+def getDisplayContent(node):
+    return getGreenContent(node.get('nodeId')) + " → " + node.get('nodeName')
 
 
-def getDetailContent(node):
+def getDetailDisplayContent(node):
     # print(node)
     if node.get('ip'):
-        return getContent(node) + " " + node.get('ip')
-    return getContent(node)
+        return getDisplayContent(node) + " " + node.get('ip')
+    return getDisplayContent(node)
 
 
 async def openSession(connection):
