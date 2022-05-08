@@ -5,12 +5,11 @@ import os
 import sys
 
 class ExpectParamSupport():
-    # WORK_PATH
     workPath = os.path.dirname(sys.argv[0])
 
     @classmethod
     def getCmd(cls, node):
-        return "expect " + os.path.join(cls.workPath, "jump.exp") + " " + cls.getParams(node) + "\n"
+        return "expect {} {}\n".format(os.path.join(cls.workPath, "jump.exp"), cls.getParams(node))
 
     @classmethod
     def getParams(cls, node):
