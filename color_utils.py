@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# encoding=utf8
+
 class ColorUtils():
     @staticmethod
     def getRedContent(content):

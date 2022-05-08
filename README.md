@@ -53,8 +53,7 @@
         整合ShellSessionGenerator
         ShellSessionGenerator增加独立的nodeId生成逻辑函数
         相同ProjectName要有覆盖提示
-    # 优化参数设置
-        ls / open / manage 使用不同的参数配置
+
     # 高亮显示关键字
         https://blog.csdn.net/qq_38882327/article/details/111034039
         \033[***开头，\033[0m

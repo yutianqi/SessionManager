@@ -4,11 +4,7 @@
 import argparse
 
 class ArgUtils():
-
-
-
     parser = argparse.ArgumentParser()
-    # parser.add_argument('--foo', action='store_true', help='foo help')
 
     subparsers = parser.add_subparsers(dest='workMode')
 
@@ -53,3 +49,4 @@ class ArgUtils():
     @classmethod
     def inNewWindow(cls):
         return cls.args.window
+        
