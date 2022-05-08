@@ -73,12 +73,12 @@ def main():
                 ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join(ids))))
             return
         if workNodes:
+            support = Iterm2SessionSupport(WORK_PATH)
             if len(workNodes) == 1:
                 # 单个tab
                 # 默认     在当前tab打开
                 # -t      在新tab打开
                 # -w      在新窗口打开
-                support = Iterm2SessionSupport(WORK_PATH)
                 if ArgUtils.inNewTab():
                     support.open(workNodes, True, False)
                     return
@@ -91,17 +91,15 @@ def main():
                 # 多个tab
                 # 默认/-t  在当前窗口，新开多个tab打开
                 # -w      在新窗口，新开多个tab打开
-                support = Iterm2SessionSupport(WORK_PATH)
-                support.open(workNodes, False, True)
+                if ArgUtils.inNewTab():
+                    support.open(workNodes, True, False)
+                else:
+                    support.open(workNodes, False, True)
                 return
-
             '''
             for node in workNodes:
                 print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")
             '''
-
-
-
 
 
 def getNodes(sessions, ids):
