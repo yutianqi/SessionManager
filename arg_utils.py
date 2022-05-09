@@ -18,13 +18,17 @@ class ArgUtils():
     subparserOpen.add_argument("-s", "--nodeIds", required=True, help="Specify node ID")
     subparserOpen.add_argument("-t", "--tab", action='store_true', default=False, required=False, help="")
     subparserOpen.add_argument("-w", "--window", action='store_true', default=False, required=False, help="")
+    subparserOpen.add_argument("-a", "--app", default="native", required=False, help="")
 
-    subparserManage = subparsers.add_parser('add', help='manage help')
+
+    subparserManage = subparsers.add_parser('add', help='add help')
     subparserManage.add_argument('ver', help='b version help')
 
-    subparserManage = subparsers.add_parser('del', help='manage help')
+
+    subparserManage = subparsers.add_parser('del', help='del help')
     subparserManage.add_argument('ver', help='b version help')
     args = parser.parse_args()
+
 
     @classmethod
     def getWorkMode(cls):
@@ -50,3 +54,6 @@ class ArgUtils():
     def inNewWindow(cls):
         return cls.args.window
         
+    @classmethod
+    def getApp(cls):
+        return cls.args.app

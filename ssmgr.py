@@ -7,7 +7,7 @@ import os
 
 from arg_utils import ArgUtils
 from color_utils import ColorUtils
-from iterm2_session_support import Iterm2SessionSupport
+# from iterm2_session_support import Iterm2SessionSupport
 from expect_param_support import ExpectParamSupport
 
 WORK_PATH = os.path.dirname(sys.argv[0])
@@ -67,41 +67,24 @@ def main():
         if ArgUtils.getNodeIds():
             nodeIds = getNodeIds(ArgUtils.getNodeIds())
             (workNodes, ids) = getNodes(sessions, nodeIds)
-
         if ids:
             print("\n {} Cannot find the node [{}]\n".format(
                 ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join(ids))))
             return
+        # 对目录节点不做处理
         workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
-        if workNodes:
-            support = Iterm2SessionSupport(WORK_PATH)
-            if len(workNodes) == 1:
-                # 单个tab
-                # 默认     在当前tab打开
-                # -t      在新tab打开
-                # -w      在新窗口打开
-                if ArgUtils.inNewTab():
-                    support.open(workNodes, True, False)
-                    return
-                if ArgUtils.inNewWindow():
-                    support.open(workNodes, False, True)
-                    return
-                # 在当前tab中执行
-                os.system(ExpectParamSupport.getCmd(workNodes[0]))
-            else:
-                # 多个tab
-                # 默认/-t  在当前窗口，新开多个tab打开
-                # -w      在新窗口，新开多个tab打开
-                if ArgUtils.inNewTab():
-                    support.open(workNodes, True, False)
-                else:
-                    support.open(workNodes, False, True)
-                return
-            '''
-            for node in workNodes:
-                print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")
-            '''
-
+        if not workNodes:
+            print("\n {} No node need to be open\n".format(ColorUtils.getRedContent("✗")))
+        inNewTab = ArgUtils.inNewTab()
+        inNewWindow = ArgUtils.inNewWindow()
+        # 在当前tab中打开一个session
+        if len(workNodes) == 1 and not inNewTab and not inNewWindow:
+            os.system(ExpectParamSupport.getCmd(workNodes[0]))
+            return
+        # support = Iterm2SessionSupport(WORK_PATH)
+        supportModule = __import__(ArgUtils.getApp() + '_session_support')
+        support = supportModule.SessionSupport(WORK_PATH)
+        support.newopen(workNodes, inNewTab, inNewWindow)
 
 def getNodes(sessions, ids):
     nodes = []
