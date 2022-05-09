@@ -118,6 +118,7 @@ def deleteSessions():
     else:
         print("\n {} No session deleted\n".format(ColorUtils.getRedContent("✗")))
 
+
 def getNodes(sessions, ids):
     nodes = []
     for item in sessions:
