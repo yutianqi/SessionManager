@@ -9,24 +9,30 @@ class ArgUtils():
     subparsers = parser.add_subparsers(dest='workMode')
 
     subparserList = subparsers.add_parser('list', help='list help')
-    subparserList.add_argument("-i", "--nodeId", default="-1", help="Specify node ID")
-    subparserList.add_argument("-n", "--nodeName", default="-1", help="Specify node name")
+    subparserList.add_argument("-i", "--nodeId", type=int, default=-1, help="Specify node ID")
+    # subparserList.add_argument("-n", "--nodeName", default="", help="Specify node name")
     subparserList.add_argument("-v", action='store_true', default=False, help="Show detail info")
 
 
     subparserOpen = subparsers.add_parser('open', help='open help')
     subparserOpen.add_argument("-s", "--nodeIds", required=True, help="Specify node ID")
-    subparserOpen.add_argument("-t", "--tab", action='store_true', default=False, required=False, help="")
-    subparserOpen.add_argument("-w", "--window", action='store_true', default=False, required=False, help="")
-    subparserOpen.add_argument("-a", "--app", default="native", required=False, help="")
+    subparserOpen.add_argument("-t", "--tab", action='store_true', default=False, required=False, help="Open session in new tab")
+    subparserOpen.add_argument("-w", "--window", action='store_true', default=False, required=False, help="Open session in new window")
+    subparserOpen.add_argument("-a", "--app", default="native", required=False, help="Specify the session manage app, e.g. iterm2")
 
 
-    subparserManage = subparsers.add_parser('add', help='add help')
-    subparserManage.add_argument('ver', help='b version help')
+    subparserAdd = subparsers.add_parser('add', help='add help')
+    # subparserAdd.add_argument("-t", "--type", default="text", choices=['text', 'json'], help="Specify the session content type")
+    subparserAdd.add_argument("-t", "--text", default="", required=False, help="Session context in text format")
+    subparserAdd.add_argument("-j", "--json", default="", required=False, help="Session context in json format")
+    subparserAdd.add_argument("-i", "--interactive", action='store_true', default=False, help="Add session in interactive mode")
 
 
-    subparserManage = subparsers.add_parser('del', help='del help')
-    subparserManage.add_argument('ver', help='b version help')
+    subparserDelete = subparsers.add_parser('delete', help='del help')
+    subparserDelete.add_argument("-s", "--nodeIds", required=True, help="Specify the ID of the node to be deleted")
+    # subparserDelete.add_argument("-n", "--nodeName", default="", help="Specify the name of the node to be deleted")
+
+
     args = parser.parse_args()
 
 
@@ -57,3 +63,15 @@ class ArgUtils():
     @classmethod
     def getApp(cls):
         return cls.args.app
+
+    @classmethod
+    def getSessionContentInTextFormat(cls):
+        return cls.args.text
+
+    @classmethod
+    def getSessionContentInJsonFormat(cls):
+        return cls.args.json
+
+    @classmethod
+    def getSessionContentInInteractiveMode(cls):
+        return cls.args.interactive

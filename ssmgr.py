@@ -2,15 +2,15 @@
 # encoding=utf8
 
 import sys
-import json
 import os
+import json
 
 from arg_utils import ArgUtils
 from color_utils import ColorUtils
 from expect_param_support import ExpectParamSupport
+from session_file_utils import SessionFileUtils
 
 WORK_PATH = os.path.dirname(sys.argv[0])
-
 
 def main():
     workMode = ArgUtils.getWorkMode()
@@ -21,23 +21,23 @@ def main():
     if "list" == workMode:
         listSessions()
         return
-    if "manage" == workMode:
-        # ssmgr -m manage
-        # sm -a <nodeName> <ip> <port> <username> <password>
-        # sm -a -f <filename>
-        # sm -d <nodeId>
-        return
     if "open" == workMode:
         openSessions() 
+        return
+    if "add" == workMode:
+        addSessions()
+        return
+    if "delete" == workMode:
+        deleteSessions()
         return
 
 
 def listSessions():
-        (total, sessions) = loadSessions()
+        (total, sessions) = SessionFileUtils.loadSessions()
         targetSessions = sessions
 
         targetNode = ArgUtils.getNodeId()
-        if targetNode != "-1":
+        if targetNode != -1:
             node = getNode(sessions, targetNode)
             if node:
                 targetSessions = [node]
@@ -50,7 +50,7 @@ def listSessions():
         if len(targetSessions) == 0:
             print("\n {} No record found...\n".format(ColorUtils.getRedContent("✗")))
             return
-        if targetNode == "-1":
+        if targetNode == -1:
             print(" {} Listing {} nodes...\n".format(
                 ColorUtils.getGreenContent("✔"), total))
 
@@ -67,14 +67,14 @@ def listSessions():
 
 def openSessions():
         workNodes = []
-        (total, sessions) = loadSessions()
+        (total, sessions) = SessionFileUtils.loadSessions()
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
             nodeIds = getNodeIds(ArgUtils.getNodeIds())
             (workNodes, ids) = getNodes(sessions, nodeIds)
         if ids:
             print("\n {} Cannot find the node [{}]\n".format(
-                ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join(ids))))
+                ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join([str(item) for item in ids]))))
             return
         # 对目录节点不做处理
         workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
@@ -92,6 +92,31 @@ def openSessions():
         support = supportModule.SessionSupport(WORK_PATH)
         support.newopen(workNodes, inNewTab, inNewWindow)
 
+
+def addSessions():
+    # sm -a <nodeName> <ip> <port> <username> <password>
+    if ArgUtils.getSessionContentInTextFormat():
+        pass
+    if ArgUtils.getSessionContentInJsonFormat():
+        session = json.loads(ArgUtils.getSessionContentInJsonFormat())	
+        SessionFileUtils.addSessionInMap(session)
+    if ArgUtils.getSessionContentInInteractiveMode():
+        nodeName = input("session name: ")
+        ip = input("ip: ")
+        port = input("port: ")
+        username = input("username: ")
+        password = input("password: ")
+        SessionFileUtils.addSession(nodeName, ip, port, username, password)
+
+
+def deleteSessions():
+    nodeIds = getNodeIds(ArgUtils.getNodeIds())
+    deletedNodeIds = SessionFileUtils.deleteSessions2(nodeIds)
+    if deletedNodeIds:
+        print("\n {} Delete sessions [{}]\n".format(
+            ColorUtils.getGreenContent("✔"), ColorUtils.getGreenContent(",".join([str(item) for item in deletedNodeIds]))))
+    else:
+        print("\n {} No session deleted\n".format(ColorUtils.getRedContent("✗")))
 
 def getNodes(sessions, ids):
     nodes = []
@@ -113,13 +138,6 @@ def getNode(sessions, id):
     if nodes:
         return nodes[0]
     return None
-
-
-def loadSessions():
-    with open(os.path.join(WORK_PATH, "sessions.json")) as f:
-        lines = f.readlines()
-        sessions = json.loads("".join(lines))
-    return (sessions.get("total"), sessions.get("nodes"))
 
 
 def treePrint(nodes, prefix, func):
@@ -156,9 +174,9 @@ def getNodeIds(idStr):
         if '-' in item:
             begin = int(item.split("-")[0])
             end = int(item.split("-")[1]) + 1
-            nodeIds.extend([str(i) for i in range(begin, end)])
+            nodeIds.extend([i for i in range(begin, end)])
         else:
-            nodeIds.append(item)
+            nodeIds.append(int(item))
     return nodeIds
 
 
