@@ -3,6 +3,7 @@
 
 import os
 import sys
+from color_utils import ColorUtils
 
 class SessionSupport():
     workPath = os.path.dirname(sys.argv[0])
@@ -15,4 +16,7 @@ class SessionSupport():
         self.workPath = workPath
 
     def newopen(self, workNodes, inNewTab, inNewWindow):
-        print("Operation not support for now...")
+        # print("\n {} Open sessions in new tab/window not support for [{}] currently.".format(ColorUtils.getRedContent("✗"), "Native"))
+        print("\n * Open sessions in new tab/window not support for [Native] currently.")
+        print(" * Please open new tab/window manualy or use the -a param to specify a terminal app, e.g. [-a iterm2].")
+

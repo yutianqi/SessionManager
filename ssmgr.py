@@ -7,24 +7,33 @@ import os
 
 from arg_utils import ArgUtils
 from color_utils import ColorUtils
-# from iterm2_session_support import Iterm2SessionSupport
 from expect_param_support import ExpectParamSupport
 
 WORK_PATH = os.path.dirname(sys.argv[0])
-workNodes = []
 
 
 def main():
-    global workNodes
     workMode = ArgUtils.getWorkMode()
     if not workMode:
         print("\n {} Please specify the work mode first.\n".format(
             ColorUtils.getRedContent("✗")))
         return
-
-    (total, sessions) = loadSessions()
-
     if "list" == workMode:
+        listSessions()
+        return
+    if "manage" == workMode:
+        # ssmgr -m manage
+        # sm -a <nodeName> <ip> <port> <username> <password>
+        # sm -a -f <filename>
+        # sm -d <nodeId>
+        return
+    if "open" == workMode:
+        openSessions() 
+        return
+
+
+def listSessions():
+        (total, sessions) = loadSessions()
         targetSessions = sessions
 
         targetNode = ArgUtils.getNodeId()
@@ -55,14 +64,10 @@ def main():
         treePrint(targetSessions, "   ", displayFuncName)
         print("")
 
-    # ssmgr -m manage
-    if "manage" == workMode:
-        # sm -a <nodeName> <ip> <port> <username> <password>
-        # sm -a -f <filename>
-        # sm -d <nodeId>
-        pass
 
-    if "open" == workMode:
+def openSessions():
+        workNodes = []
+        (total, sessions) = loadSessions()
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
             nodeIds = getNodeIds(ArgUtils.getNodeIds())
@@ -81,10 +86,12 @@ def main():
         if len(workNodes) == 1 and not inNewTab and not inNewWindow:
             os.system(ExpectParamSupport.getCmd(workNodes[0]))
             return
+        # 需要在新tab/window打开session场景，根据实际情况选择App支持
         # support = Iterm2SessionSupport(WORK_PATH)
         supportModule = __import__(ArgUtils.getApp() + '_session_support')
         support = supportModule.SessionSupport(WORK_PATH)
         support.newopen(workNodes, inNewTab, inNewWindow)
+
 
 def getNodes(sessions, ids):
     nodes = []
