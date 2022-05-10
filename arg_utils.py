@@ -6,6 +6,8 @@ import argparse
 class ArgUtils():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('-v', "--version", action='store_true', default=False, help='show version')
+
     subparsers = parser.add_subparsers(dest='workMode')
 
     subparserList = subparsers.add_parser('list', help='list help')
@@ -85,3 +87,7 @@ class ArgUtils():
     @classmethod
     def getSessionContentInFileFormat(cls):
         return cls.args.file
+
+    @classmethod
+    def isShowVersion(cls):
+        return cls.args.version

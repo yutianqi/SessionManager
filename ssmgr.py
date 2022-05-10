@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # encoding=utf8
 
+# Name:         ssmgr.py
+# Purpose:      Management sessions
+# Author:       Yu Tianqi <ytq0415@gmail.com>
+# Created:      2022.05.05 00:20:37
+# Version:      0.9.1
+
 import sys
 import os
 import json
@@ -11,13 +17,10 @@ from expect_param_support import ExpectParamSupport
 from session_file_utils import SessionFileUtils
 
 WORK_PATH = os.path.dirname(sys.argv[0])
+VERSION = "0.9.1"
 
 def main():
     workMode = ArgUtils.getWorkMode()
-    if not workMode:
-        print("\n {} Please specify the work mode first.\n".format(
-            ColorUtils.getRedContent("✗")))
-        return
     if "list" == workMode:
         listSessions()
         return
@@ -30,6 +33,12 @@ def main():
     if "delete" == workMode:
         deleteSessions()
         return
+    if ArgUtils.isShowVersion():
+        print("\nSessionManager version: {}".format(VERSION))
+    else:
+        print("\n {} Please specify the work mode first.\n".format(
+            ColorUtils.getRedContent("✗")))
+    return
 
 
 def listSessions():
