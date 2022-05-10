@@ -23,9 +23,10 @@ class ArgUtils():
 
     subparserAdd = subparsers.add_parser('add', help='add help')
     # subparserAdd.add_argument("-t", "--type", default="text", choices=['text', 'json'], help="Specify the session content type")
-    subparserAdd.add_argument("-t", "--text", default="", required=False, help="Session context in text format")
-    subparserAdd.add_argument("-j", "--json", default="", required=False, help="Session context in json format")
+    subparserAdd.add_argument("-t", "--text", default="", required=False, help="Add session in text format")
+    subparserAdd.add_argument("-j", "--json", default="", required=False, help="Add ession in json format")
     subparserAdd.add_argument("-i", "--interactive", action='store_true', default=False, help="Add session in interactive mode")
+    subparserAdd.add_argument("-f", "--file", default="", required=False, help="Add session in file format")
 
 
     subparserDelete = subparsers.add_parser('delete', help='del help')
@@ -75,3 +76,7 @@ class ArgUtils():
     @classmethod
     def getSessionContentInInteractiveMode(cls):
         return cls.args.interactive
+
+    @classmethod
+    def getSessionContentInFileFormat(cls):
+        return cls.args.file

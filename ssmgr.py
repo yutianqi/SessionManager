@@ -94,12 +94,23 @@ def openSessions():
 
 
 def addSessions():
-    # sm -a <nodeName> <ip> <port> <username> <password>
     if ArgUtils.getSessionContentInTextFormat():
         pass
     if ArgUtils.getSessionContentInJsonFormat():
         session = json.loads(ArgUtils.getSessionContentInJsonFormat())	
         SessionFileUtils.addSessionInMap(session)
+    if ArgUtils.getSessionContentInFileFormat():
+        fileName = ArgUtils.getSessionContentInFileFormat()
+
+        # parser = NetEcoConfigParser()
+        # parser = NetEcoConfigParserV2()
+        # data = parser.parse(fileName)
+        # print(data)
+        # generator = iTerm2SessionGenerator()
+        # generator.generate(data, True)
+        # generator.generate(data, False)
+
+
     if ArgUtils.getSessionContentInInteractiveMode():
         nodeName = input("session name: ")
         ip = input("ip: ")
@@ -107,7 +118,6 @@ def addSessions():
         username = input("username: ")
         password = input("password: ")
         SessionFileUtils.addSession(nodeName, ip, port, username, password)
-
 
 def deleteSessions():
     nodeIds = getNodeIds(ArgUtils.getNodeIds())
