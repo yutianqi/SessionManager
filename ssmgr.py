@@ -51,12 +51,15 @@ def listSessions():
             print("\n {} No record found...\n".format(ColorUtils.getRedContent("✗")))
             return
         if targetNode == -1:
-            print(" {} Listing {} nodes...\n".format(
-                ColorUtils.getGreenContent("✔"), total))
+            # pass
+            print(" {} Listing {} nodes...\n".format(ColorUtils.getGreenContent("✔"), total))
+            
 
         # sl -a                     平铺展示
-        # displayFuncName = getDisplayContent
         displayFuncName = getDisplayContent
+        if ArgUtils.isLongFormat():
+            displayFuncName = getLongFormatDisplayContent
+
         if ArgUtils.isDetail():
             displayFuncName = getDetailDisplayContent
 
@@ -158,25 +161,31 @@ def treePrint(nodes, prefix, func):
         next = prefix
         node = nodes[i]
         if i == l - 1:
-            current += "└── " + func(node)
             next += "    "
+            current += "└── " + func(node, next)
         else:
-            current += "├── " + func(node)
             next += "│   "
+            current += "├── " + func(node, next)
         print(current)
 
         if node.get('childNodes'):
             treePrint(node.get('childNodes'), next, func)
 
 
-def getDisplayContent(node):
+def getDisplayContent(node, prefix):
     return ColorUtils.getGreenContent(node.get('nodeId')) + " → " + node.get('nodeName')
 
 
-def getDetailDisplayContent(node):
-    if node.get('ip'):
-        return getDisplayContent(node) + " " + node.get('ip')
-    return getDisplayContent(node)
+def getLongFormatDisplayContent(node, prefix):
+    if node.get('nodeType') == "session":
+        return getDisplayContent(node, prefix) + " " + node.get('ip')
+    return getDisplayContent(node, prefix)
+
+def getDetailDisplayContent(node, prefix):
+    prefix += "     "
+    if node.get('nodeType') == "session":
+        return "{} \n{}{}@{}:{}".format(getDisplayContent(node, prefix), prefix, node.get('username'), node.get('ip'), node.get('port'))
+    return getDisplayContent(node, prefix)
 
 
 def getNodeIds(idStr):

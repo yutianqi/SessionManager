@@ -11,6 +11,7 @@ class ArgUtils():
     subparserList = subparsers.add_parser('list', help='list help')
     subparserList.add_argument("-i", "--nodeId", type=int, default=-1, help="Specify node ID")
     # subparserList.add_argument("-n", "--nodeName", default="", help="Specify node name")
+    subparserList.add_argument("-l", action='store_true', default=False, help="Display in long format")
     subparserList.add_argument("-v", action='store_true', default=False, help="Show detail info")
 
 
@@ -48,6 +49,10 @@ class ArgUtils():
     @classmethod
     def getNodeIds(cls):
         return cls.args.nodeIds
+
+    @classmethod
+    def isLongFormat(cls):
+        return cls.args.l
 
     @classmethod
     def isDetail(cls):
