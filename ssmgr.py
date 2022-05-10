@@ -98,18 +98,18 @@ def addSessions():
         pass
     if ArgUtils.getSessionContentInJsonFormat():
         session = json.loads(ArgUtils.getSessionContentInJsonFormat())	
-        SessionFileUtils.addSessionInMap(session)
+        SessionFileUtils.addSessionsInMap([session])
     if ArgUtils.getSessionContentInFileFormat():
         fileName = ArgUtils.getSessionContentInFileFormat()
-
-        # parser = NetEcoConfigParser()
-        # parser = NetEcoConfigParserV2()
-        # data = parser.parse(fileName)
-        # print(data)
-        # generator = iTerm2SessionGenerator()
-        # generator.generate(data, True)
-        # generator.generate(data, False)
-
+        with open(fileName) as f:
+            lines = f.readlines()
+            data = json.loads("".join(lines))
+            if type(data) == list:
+                SessionFileUtils.addSessionsInMap(data)
+            elif type(data) == map:
+                SessionFileUtils.addSessionsInMap([data])
+            else:
+                print("\n {} Invalid format\n".format(ColorUtils.getRedContent("✗")))  
 
     if ArgUtils.getSessionContentInInteractiveMode():
         nodeName = input("session name: ")
@@ -121,7 +121,7 @@ def addSessions():
 
 def deleteSessions():
     nodeIds = getNodeIds(ArgUtils.getNodeIds())
-    deletedNodeIds = SessionFileUtils.deleteSessions2(nodeIds)
+    deletedNodeIds = SessionFileUtils.deleteSessionsMain(nodeIds)
     if deletedNodeIds:
         print("\n {} Delete sessions [{}]\n".format(
             ColorUtils.getGreenContent("✔"), ColorUtils.getGreenContent(",".join([str(item) for item in deletedNodeIds]))))

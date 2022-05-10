@@ -36,26 +36,58 @@ class SessionFileUtils():
             "username": username,
             "password": password
         }
-        cls.addSessionInMap(session)
+        cls.addSessionsInMap([session])
+        
+    @classmethod
+    def addSessionsInMap(cls, sessions):
+        for session in sessions:
+            cls.arrangeNodeId(session)
+        rowJson = cls.getRowJson()
+        rowJson.get("nodes").extend(sessions)
+        rowJson["updateTime"] = int(time.time())
+        rowJson["total"] = cls.getTotal(rowJson.get("nodes"))
+        cls.saveSessionsToFile()
 
     @classmethod
-    def addSessionInMap(cls, session):
-        # "nodeId": cls.getNewNodeId()
-        cls.arrangeNodeId(session)
-
+    def deleteSessionsMain(cls, ids):
         rowJson = cls.getRowJson()
-        rowJson.get("nodes").append(session)
+        deletedNodeIds = cls.deleteSessions(rowJson.get("nodes"), ids)
         rowJson["updateTime"] = int(time.time())
+        rowJson["total"] = cls.getTotal(rowJson.get("nodes"))
         cls.saveSessionsToFile()
+        return deletedNodeIds
+
+    @classmethod
+    def deleteSessions(cls, nodes, ids):
+        deletedNodeIds = []
+        for item in nodes[::-1]:
+            if item.get("nodeId") in ids:
+                nodes.remove(item)
+                deletedNodeIds.append(item.get("nodeId"))
+                continue
+            if item.get("childNodes"):
+                childDeletedNodeIds = cls.deleteSessions(item.get("childNodes"), ids)
+                if childDeletedNodeIds:
+                    deletedNodeIds.extend(childDeletedNodeIds)
+        return deletedNodeIds
+
+    @classmethod
+    def getTotal(cls, nodes):
+        total = 0
+        for item in nodes:
+            if item.get("nodeType") == 'session':
+                total += 1
+                continue
+            if item.get("childNodes"):
+                total += cls.getTotal(item.get("childNodes"))
+        return total
 
     @classmethod
     def getNewNodeId(cls):
         if not cls.maxNodeId:
             sessions = cls.getRowJson()
             cls.maxNodeId = cls.getMaxNodeId(sessions.get("nodes"))
-            # print("cls.maxNodeId" + str(cls.maxNodeId))
         cls.maxNodeId += 1
-        # print(cls.maxNodeId)
         return cls.maxNodeId
 
     @classmethod
@@ -81,25 +113,3 @@ class SessionFileUtils():
         if node.get("childNodes"):
             for item in node.get("childNodes"):
                 cls.arrangeNodeId(item)
-
-    @classmethod
-    def deleteSessions2(cls, ids):
-        deletedNodeIds = cls.deleteSessions(cls.getRowJson().get("nodes"), ids)
-        cls.saveSessionsToFile()
-        return deletedNodeIds
-
-    @classmethod
-    def deleteSessions(cls, nodes, ids):
-        deletedNodeIds = []
-        for item in nodes[::-1]:
-            if item.get("nodeId") in ids:
-                nodes.remove(item)
-                deletedNodeIds.append(item.get("nodeId"))
-                continue
-            if item.get("childNodes"):
-                childDeletedNodeIds = cls.deleteSessions(item.get("childNodes"), ids)
-                if childDeletedNodeIds:
-                    deletedNodeIds.extend(childDeletedNodeIds)
-        return deletedNodeIds
-
-
