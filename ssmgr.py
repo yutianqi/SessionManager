@@ -173,7 +173,10 @@ def treePrint(nodes, prefix, func):
 
 
 def getDisplayContent(node, prefix):
+    if node.get("nodeType") == "directory":
+        return ColorUtils.getGreenContent(node.get('nodeId')) + " → " + ColorUtils.getYellowContent(node.get('nodeName'))
     return ColorUtils.getGreenContent(node.get('nodeId')) + " → " + node.get('nodeName')
+
 
 
 def getLongFormatDisplayContent(node, prefix):
