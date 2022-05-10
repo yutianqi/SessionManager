@@ -73,16 +73,19 @@ def openSessions():
         (total, sessions) = SessionFileUtils.loadSessions()
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
-            nodeIds = getNodeIds(ArgUtils.getNodeIds())
-            (workNodes, ids) = getNodes(sessions, nodeIds)
+            targetNodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
+            (workNodes, ids) = getNodes(sessions, targetNodeIds)
         if ids:
             print("\n {} Cannot find the node [{}]\n".format(
                 ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join([str(item) for item in ids]))))
             return
         # 对目录节点不做处理
-        workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
+        # workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
+        # print([item.get("nodeId") for item in workNodes])
+
         if not workNodes:
             print("\n {} No node need to be open\n".format(ColorUtils.getRedContent("✗")))
+            return
         inNewTab = ArgUtils.inNewTab()
         inNewWindow = ArgUtils.inNewWindow()
         # 在当前tab中打开一个session
@@ -123,7 +126,7 @@ def addSessions():
         SessionFileUtils.addSession(nodeName, ip, port, username, password)
 
 def deleteSessions():
-    nodeIds = getNodeIds(ArgUtils.getNodeIds())
+    nodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
     deletedNodeIds = SessionFileUtils.deleteSessionsMain(nodeIds)
     if deletedNodeIds:
         print("\n {} Delete sessions [{}]\n".format(
@@ -136,7 +139,7 @@ def getNodes(sessions, ids):
     nodes = []
     for item in sessions:
         if item.get("nodeId") in ids:
-            nodes.append(item)
+            nodes.extend(getSubSessionNodes([item]))
             ids.remove(item.get("nodeId"))
             if not ids:
                 return (nodes, ids)
@@ -145,6 +148,17 @@ def getNodes(sessions, ids):
             if subNodes:
                 nodes.extend(subNodes)
     return (nodes, ids)
+
+
+def getSubSessionNodes(parentNodes):
+    nodes = []
+    for item in parentNodes:
+        if item.get("nodeType") == "session":
+            nodes.append(item)
+            continue
+        if item.get("childNodes"):
+            nodes.extend(getSubSessionNodes(item.get("childNodes")))
+    return nodes
 
 
 def getNode(sessions, id):
@@ -191,7 +205,7 @@ def getDetailDisplayContent(node, prefix):
     return getDisplayContent(node, prefix)
 
 
-def getNodeIds(idStr):
+def parseNodeIdStr(idStr):
     nodeIds = []
     for item in idStr.split(","):
         if '-' in item:

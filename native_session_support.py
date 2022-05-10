@@ -18,5 +18,5 @@ class SessionSupport():
     def newopen(self, workNodes, inNewTab, inNewWindow):
         # print("\n {} Open sessions in new tab/window not support for [{}] currently.".format(ColorUtils.getRedContent("✗"), "Native"))
         print("\n * Open sessions in new tab/window not support for [Native] currently.")
-        print(" * Please open new tab/window manualy or use the -a param to specify a terminal app, e.g. [-a iterm2].")
+        print(" * Please open new tab/window manualy or use the -a param to specify a terminal app, e.g. [-a iterm2].\n")
 
