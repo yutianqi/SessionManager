@@ -23,10 +23,10 @@ class SessionSupport():
             # -w      在新窗口打开
             if inNewTab:
                 self.open(workNodes, True, False)
-                return
+                return True
             if inNewWindow:
                 self.open(workNodes, False, True)
-                return
+                return True
         else:
             # 多个tab
             # 默认/-t  在当前窗口，新开多个tab打开
@@ -35,7 +35,7 @@ class SessionSupport():
                 self.open(workNodes, True, False)
             else:
                 self.open(workNodes, False, True)
-            return
+            return True
         '''
         for node in workNodes:
             print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")

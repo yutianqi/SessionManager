@@ -83,7 +83,7 @@ def openSessions():
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
             targetNodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
-            (workNodes, ids) = getNodes(sessions, targetNodeIds)
+            (workNodes, ids) = getSessionNodes(sessions, targetNodeIds)
         if ids:
             print("\n {} Cannot find the node [{}]\n".format(
                 ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join([str(item) for item in ids]))))
@@ -91,6 +91,7 @@ def openSessions():
         # 对目录节点不做处理
         # workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
         # print([item.get("nodeId") for item in workNodes])
+
 
         if not workNodes:
             print("\n {} No node need to be open\n".format(ColorUtils.getRedContent("✗")))
@@ -105,7 +106,12 @@ def openSessions():
         # support = Iterm2SessionSupport(WORK_PATH)
         supportModule = __import__(ArgUtils.getApp() + '_session_support')
         support = supportModule.SessionSupport(WORK_PATH)
-        support.newopen(workNodes, inNewTab, inNewWindow)
+        openResult = support.newopen(workNodes, inNewTab, inNewWindow)
+
+        if openResult:
+            print("{} 打开{}节点成功".format(ColorUtils.getRedContent("✔"), [item.get("nodeId") for item in workNodes]))
+        else:
+            print("{} 打开{}节点失败".format(ColorUtils.getRedContent("✗"), [item.get("nodeId") for item in workNodes]))
 
 
 def addSessions():
@@ -134,6 +140,7 @@ def addSessions():
         password = input("password: ")
         SessionFileUtils.addSession(nodeName, ip, port, username, password)
 
+
 def deleteSessions():
     nodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
     deletedNodeIds = SessionFileUtils.deleteSessionsMain(nodeIds)
@@ -148,7 +155,7 @@ def getNodes(sessions, ids):
     nodes = []
     for item in sessions:
         if item.get("nodeId") in ids:
-            nodes.extend(getSubSessionNodes([item]))
+            nodes.append(item)
             ids.remove(item.get("nodeId"))
             if not ids:
                 return (nodes, ids)
@@ -159,25 +166,59 @@ def getNodes(sessions, ids):
     return (nodes, ids)
 
 
-def getSubSessionNodes(parentNodes):
+def getSessionNodes(sessions, ids):
+    '''从指定sessions中获取id在ids列表内的session'''
     nodes = []
-    for item in parentNodes:
-        if item.get("nodeType") == "session":
-            nodes.append(item)
+    for item in sessions:
+        if item.get("nodeId") in ids:
+            if item.get("nodeType") == "directory":
+                # 如果是目录，则将目录下所有session添加到nodes中
+                nodes.extend(getSubSessionNodes(item))
+            else:
+                # 如果是session，则该session添加到nodes中
+                nodes.extend(item)
+            ids.remove(item.get("nodeId"))
+            if not ids:
+                return (nodes, ids)
             continue
+        # 如果当前节点id不在ids中，但是包含子节点，则在自节点中继续查找
         if item.get("childNodes"):
-            nodes.extend(getSubSessionNodes(item.get("childNodes")))
+            (subNodes, ids) = getSessionNodes(item.get("childNodes"), ids)
+            if subNodes:
+                nodes.extend(subNodes)
+    return (nodes, ids)
+
+
+def getSubSessionNodes(parentNode):
+    '''查询某个节点下的所有子session节点'''
+    nodes = []
+    if not parentNode.get("childNodes"):
+        # 如果没有子节点直接返回空列表
+        return nodes
+    for node in parentNode.get("childNodes"):
+        # 如果子节点是session，则直接添加到nodes中
+        if node.get("nodeType") == "session":
+            nodes.append(node)
+            continue
+        # 如果子节点是目录，则继续查询该目录下的子节点
+        nodes.extend(getSubSessionNodes(node))
     return nodes
 
 
 def getNode(sessions, id):
-    nodes = getNodes(sessions, [id])[0]
-    if nodes:
-        return nodes[0]
+    '''在sessions中查询指定id的节点'''
+    for item in sessions:
+        if item.get("nodeId") == id:
+            return item
+        if item.get("childNodes"):
+            node = getNode(item.get("childNodes"), id)
+            if node:
+                return node
     return None
 
 
 def treePrint(nodes, prefix, func):
+    '''打印节点树'''
     l = len(nodes)
     for i in range(l):
         current = prefix
@@ -201,11 +242,11 @@ def getDisplayContent(node, prefix):
     return ColorUtils.getGreenContent(node.get('nodeId')) + " → " + node.get('nodeName')
 
 
-
 def getLongFormatDisplayContent(node, prefix):
     if node.get('nodeType') == "session":
         return getDisplayContent(node, prefix) + " " + node.get('ip')
     return getDisplayContent(node, prefix)
+
 
 def getDetailDisplayContent(node, prefix):
     prefix += "     "
@@ -215,6 +256,7 @@ def getDetailDisplayContent(node, prefix):
 
 
 def parseNodeIdStr(idStr):
+    '''解析nodeId字符串'''
     nodeIds = []
     for item in idStr.split(","):
         if '-' in item:
