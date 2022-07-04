@@ -65,12 +65,12 @@ def listSessions():
             
 
         # sl -a                     平铺展示
-        displayFuncName = getDisplayContent
+        displayFuncName = getDetailDisplayContent
         if ArgUtils.isLongFormat():
             displayFuncName = getLongFormatDisplayContent
 
-        if ArgUtils.isDetail():
-            displayFuncName = getDetailDisplayContent
+        # if ArgUtils.isDetail():
+        #     displayFuncName = getDetailDisplayContent
 
         # sl -l <n>                 展开到第n层
         treePrint(targetSessions, "   ", displayFuncName)
