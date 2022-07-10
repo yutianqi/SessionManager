@@ -244,7 +244,8 @@ def getDisplayContent(node, prefix):
 
 def getLongFormatDisplayContent(node, prefix):
     if node.get('nodeType') == "session":
-        return getDisplayContent(node, prefix) + " " + node.get('ip')
+        # return getDisplayContent(node, prefix) + " " + node.get('ip')
+        return "{} {}@{}:{}".format(getDisplayContent(node, prefix), node.get('username'), node.get('ip'), node.get('port'))
     return getDisplayContent(node, prefix)
 
 
