@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # encoding=utf8
 
-from asyncore import close_all
 import json
 import os
 import sys

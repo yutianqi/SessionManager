@@ -1,16 +1,9 @@
 #!/usr/bin/env python3
 # encoding=utf8
 
-# Name:         ssmgr.py
-# Purpose:      Management sessions
-# Author:       Yu Tianqi <ytq0415@gmail.com>
-# Created:      2022.05.05 00:20:37
-# Version:      0.9.1
-
 import sys
 import os
 import json
-
 from arg_utils import ArgUtils
 from color_utils import ColorUtils
 from expect_param_support import ExpectParamSupport
@@ -91,7 +84,6 @@ def openSessions():
         # 对目录节点不做处理
         # workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
         # print([item.get("nodeId") for item in workNodes])
-
 
         if not workNodes:
             print("\n {} No node need to be open\n".format(ColorUtils.getRedContent("✗")))
