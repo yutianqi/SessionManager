@@ -83,6 +83,7 @@ def openSessions():
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
             targetNodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
+            # print("targetNodeIds={}".format(targetNodeIds))
             (workNodes, ids) = getSessionNodes(sessions, targetNodeIds)
         if ids:
             print("\n {} Cannot find the node [{}]\n".format(
@@ -92,7 +93,7 @@ def openSessions():
         # workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
         # print([item.get("nodeId") for item in workNodes])
 
-
+        # print(workNodes)
         if not workNodes:
             print("\n {} No node need to be open\n".format(ColorUtils.getRedContent("✗")))
             return
@@ -171,12 +172,13 @@ def getSessionNodes(sessions, ids):
     nodes = []
     for item in sessions:
         if item.get("nodeId") in ids:
+            # print("found {}".format(item.get("nodeId")))
             if item.get("nodeType") == "directory":
                 # 如果是目录，则将目录下所有session添加到nodes中
                 nodes.extend(getSubSessionNodes(item))
             else:
                 # 如果是session，则该session添加到nodes中
-                nodes.extend(item)
+                nodes.append(item)
             ids.remove(item.get("nodeId"))
             if not ids:
                 return (nodes, ids)
