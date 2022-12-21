@@ -11,10 +11,11 @@ import sys
 import os
 import json
 
-from arg_utils import ArgUtils
-from color_utils import ColorUtils
-from expect_param_support import ExpectParamSupport
-from session_file_utils import SessionFileUtils
+from utils.arg_utils import ArgUtils
+from utils.color_utils import ColorUtils
+from utils.session_file_utils import SessionFileUtils
+from support.expect_param_support import ExpectParamSupport
+
 
 WORK_PATH = os.path.dirname(sys.argv[0])
 VERSION = "0.9.1"
@@ -117,10 +118,12 @@ def openSessions():
 
 def addSessions():
     if ArgUtils.getSessionContentInTextFormat():
-        pass
+        print("\n {} Featurn is not implemented...\n".format(ColorUtils.getRedContent("✗")))
+        return
     if ArgUtils.getSessionContentInJsonFormat():
         session = json.loads(ArgUtils.getSessionContentInJsonFormat())	
         SessionFileUtils.addSessionsInMap([session])
+        return
     if ArgUtils.getSessionContentInFileFormat():
         fileName = ArgUtils.getSessionContentInFileFormat()
         with open(fileName) as f:
@@ -132,7 +135,7 @@ def addSessions():
                 SessionFileUtils.addSessionsInMap([data])
             else:
                 print("\n {} Invalid format\n".format(ColorUtils.getRedContent("✗")))  
-
+        return
     if ArgUtils.getSessionContentInInteractiveMode():
         nodeName = input("session name: ")
         ip = input("ip: ")
@@ -140,7 +143,8 @@ def addSessions():
         username = input("username: ")
         password = input("password: ")
         SessionFileUtils.addSession(nodeName, ip, port, username, password)
-
+        return
+    print("\n {} Please specify input format, usage: ssmgr.py add [-h] [-t TEXT] [-j JSON] [-i] [-f FILE]\n".format(ColorUtils.getRedContent("✗")))
 
 def deleteSessions():
     nodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
