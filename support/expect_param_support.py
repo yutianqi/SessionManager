@@ -9,7 +9,7 @@ class ExpectParamSupport():
 
     @classmethod
     def getCmd(cls, node):
-        return "expect {} {}\n".format(os.path.join(cls.workPath, "jump.exp"), cls.getParams(node))
+        return "expect {} {}\n".format(os.path.join(cls.workPath, "support", "jump.exp"), cls.getParams(node))
 
     @classmethod
     def getParams(cls, node):

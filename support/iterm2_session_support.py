@@ -38,7 +38,7 @@ class SessionSupport():
             return True
         '''
         for node in workNodes:
-            print(os.path.join(WORK_PATH, "jump.exp") + " " + getParams(node) + "\n")
+            print(os.path.join(WORK_PATH, "support", "jump.exp") + " " + getParams(node) + "\n")
         '''
 
     def open(self, nodes, inNewTab, inNewWindow):
