@@ -1,3 +1,10 @@
+# Description
+
+
+# Usage
+1. sudo apt install expect
+
+
 # 功能设计
 1. ssm 
    ssm -a <nodeName> <ip> <port> <username> <password>：交互式新增配置项
