@@ -131,7 +131,7 @@ def addSessions():
             data = json.loads("".join(lines))
             if type(data) == list:
                 SessionFileUtils.addSessionsInMap(data)
-            elif type(data) == map:
+            elif type(data) == dict:
                 SessionFileUtils.addSessionsInMap([data])
             else:
                 print("\n {} Invalid format\n".format(ColorUtils.getRedContent("✗")))  
