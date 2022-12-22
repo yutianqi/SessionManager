@@ -47,7 +47,6 @@ while {$idx < $argc} {
       -re "\[#$] " {
         # 登录成功，逐一执行命令
         if {$commandn} {
-          send_user "execute cmd"
           set commandi 0
           while { $commandi < $commandn } {
             if { $commandi > 0 } {

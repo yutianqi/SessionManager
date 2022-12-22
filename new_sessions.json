@@ -1,0 +1,28 @@
+[{
+    "nodeName": "aws",
+    "nodeType": "session",
+    "ip": "34.229.204.20",
+    "port": "22",
+    "username": "ubuntu",
+    "password": "_2021@NetEco",
+    "jumper": {
+        "ip": "34.229.204.20",
+        "port": "22",
+        "username": "ubuntu",
+        "password": "_2021@NetEco",
+        "commands": [
+            {
+                "expect": "$ ",
+                "send": "su -"
+            },
+            {
+                "expect": "Password",
+                "send": "_2021@NetEco"
+            },
+            {
+                "expect": "# ",
+                "send": "echo Hello"
+            }
+        ]
+    }
+}]
