@@ -1,1 +1,43 @@
-{"version": "0.9.1", "updateTime": 1652096276, "total": 2, "nodes": [{"nodeName": "2", "nodeType": "session", "ip": "3", "port": "4", "username": "5", "password": "6", "nodeId": 7}, {"nodeName": "Disb2", "nodeType": "directory", "childNodes": [{"nodeName": "Disb1_2", "nodeType": "session", "ip": "119.3.215.153", "port": "22", "username": "ossuser", "password": "Huawei@Cloud8#", "jumper": {"ip": "192.168.0.8", "port": "22", "username": "ossadm", "password": "Huawei@Cloud8#"}, "nodeId": 16}], "nodeId": 14}, {"nodeName": "Disb2", "nodeType": "directory", "childNodes": [], "nodeId": 20}, {"nodeName": "Disb2", "nodeType": "directory", "childNodes": [{"nodeName": "Disb1_2", "nodeType": "session", "ip": "119.3.215.153", "port": "22", "username": "ossuser", "password": "Huawei@Cloud8#", "jumper": {"ip": "192.168.0.8", "port": "22", "username": "ossadm", "password": "Huawei@Cloud8#"}, "nodeId": 23}], "nodeId": 21}, {"nodeName": "Disb2", "nodeType": "directory", "childNodes": [{"nodeName": "Disb1_2", "nodeType": "session", "ip": "119.3.215.153", "port": "22", "username": "ossuser", "password": "Huawei@Cloud8#", "jumper": {"ip": "192.168.0.8", "port": "22", "username": "ossadm", "password": "Huawei@Cloud8#"}, "nodeId": 26}], "nodeId": 24}, {"nodeName": "Disb2", "nodeType": "directory", "childNodes": [], "nodeId": 27}, {"nodeName": "Disb2", "nodeType": "directory", "childNodes": [{"nodeName": "Disb1_1", "nodeType": "session", "ip": "119.3.215.153", "port": "22", "username": "ossuser", "password": "Huawei@Cloud8#", "jumper": {"ip": "192.168.0.8", "port": "22", "username": "ossadm", "password": "Huawei@Cloud8#"}, "nodeId": 31}, {"nodeName": "Disb1_2", "nodeType": "session", "ip": "119.3.215.153", "port": "22", "username": "ossuser", "password": "Huawei@Cloud8#", "jumper": {"ip": "192.168.0.8", "port": "22", "username": "ossadm", "password": "Huawei@Cloud8#"}, "nodeId": 32}], "nodeId": 30}, {"nodeName": "Disb2", "nodeType": "directory", "childNodes": [{"nodeName": "Disb1_1", "nodeType": "session", "ip": "119.3.215.153", "port": "22", "username": "ossuser", "password": "Huawei@Cloud8#", "jumper": {"ip": "192.168.0.8", "port": "22", "username": "ossadm", "password": "Huawei@Cloud8#"}, "nodeId": 37}], "nodeId": 36}]}
+{
+    "version": "0.9.1",
+    "updateTime": 1652096276,
+    "total": 2,
+    "nodes": [
+        {
+            "nodeName": "Disb2",
+            "nodeType": "directory",
+            "childNodes": [
+                {
+                    "nodeName": "Disb1_1",
+                    "nodeType": "session",
+                    "ip": "10.50.135.106",
+                    "port": "22",
+                    "username": "ossuser",
+                    "password": "Huawei@Cloud8#",
+                    "jumper": {
+                        "ip": "10.50.135.106",
+                        "port": "22",
+                        "username": "ossadm",
+                        "password": "Huawei@Cloud8#",
+                        "commands": [
+                            {
+                                "expect": "$ ",
+                                "send": "su -"
+                            },
+                            {
+                                "expect": "Password",
+                                "send": "Huawei@Cloud8#"
+                            },
+                            {
+                                "expect": "# ",
+                                "send": "su - dbuser"
+                            }
+                        ]
+                    },
+                    "nodeId": 31
+                }
+            ],
+            "nodeId": 30
+        }
+    ]
+}
