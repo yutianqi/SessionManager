@@ -5,7 +5,7 @@
 # Purpose:      Management sessions
 # Author:       Yu Tianqi <ytq0415@gmail.com>
 # Created:      2022.05.05 00:20:37
-# Version:      0.9.1
+# Version:      0.9.2
 
 import sys
 import os
@@ -18,21 +18,25 @@ from support.expect_param_support import ExpectParamSupport
 
 
 WORK_PATH = os.path.dirname(sys.argv[0])
-VERSION = "0.9.1"
+VERSION = "0.9.2"
+
 
 def main():
+    """
+    入口方法
+    """
     workMode = ArgUtils.getWorkMode()
-    if "list" == workMode:
-        listSessions()
-        return
-    if "open" == workMode:
-        openSessions() 
-        return
     if "add" == workMode:
         addSessions()
         return
     if "delete" == workMode:
         deleteSessions()
+        return
+    if "open" == workMode:
+        openSessions()
+        return
+    if "list" == workMode:
+        listSessions()
         return
     if ArgUtils.isShowVersion():
         print("\nSessionManager version: {}".format(VERSION))
@@ -42,86 +46,16 @@ def main():
     return
 
 
-def listSessions():
-        (total, sessions) = SessionFileUtils.loadSessions()
-        targetSessions = sessions
-
-        targetNode = ArgUtils.getNodeId()
-        if targetNode != -1:
-            node = getNode(sessions, targetNode)
-            if node:
-                targetSessions = [node]
-                print("")
-            else:
-                print("\n {} Cannot find the node [{}]\n".format(
-                    ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(targetNode)))
-                return
-
-        if len(targetSessions) == 0:
-            print("\n {} No record found...\n".format(ColorUtils.getRedContent("✗")))
-            return
-        if targetNode == -1:
-            # pass
-            print(" {} Listing {} nodes...\n".format(ColorUtils.getGreenContent("✔"), total))
-            
-
-        # sl -a                     平铺展示
-        displayFuncName = getDetailDisplayContent
-        if ArgUtils.isLongFormat():
-            displayFuncName = getLongFormatDisplayContent
-
-        # if ArgUtils.isDetail():
-        #     displayFuncName = getDetailDisplayContent
-
-        # sl -l <n>                 展开到第n层
-        treePrint(targetSessions, "   ", displayFuncName)
-        print("")
-
-
-def openSessions():
-        workNodes = []
-        (total, sessions) = SessionFileUtils.loadSessions()
-        # so -ns 47,48-50
-        if ArgUtils.getNodeIds():
-            targetNodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
-            # print("targetNodeIds={}".format(targetNodeIds))
-            (workNodes, ids) = getSessionNodes(sessions, targetNodeIds)
-        if ids:
-            print("\n {} Cannot find the node [{}]\n".format(
-                ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join([str(item) for item in ids]))))
-            return
-        # 对目录节点不做处理
-        # workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
-        # print([item.get("nodeId") for item in workNodes])
-
-        # print(workNodes)
-        if not workNodes:
-            print("\n {} No node need to be open\n".format(ColorUtils.getRedContent("✗")))
-            return
-        inNewTab = ArgUtils.inNewTab()
-        inNewWindow = ArgUtils.inNewWindow()
-        # 在当前tab中打开一个session
-        if len(workNodes) == 1 and not inNewTab and not inNewWindow:
-            os.system(ExpectParamSupport.getCmd(workNodes[0]))
-            return
-        # 需要在新tab/window打开session场景，根据实际情况选择App支持
-        # support = Iterm2SessionSupport(WORK_PATH)
-        supportModule = __import__(ArgUtils.getApp() + '_session_support')
-        support = supportModule.SessionSupport(WORK_PATH)
-        openResult = support.newopen(workNodes, inNewTab, inNewWindow)
-
-        if openResult:
-            print("{} 打开{}节点成功".format(ColorUtils.getRedContent("✔"), [item.get("nodeId") for item in workNodes]))
-        else:
-            print("{} 打开{}节点失败".format(ColorUtils.getRedContent("✗"), [item.get("nodeId") for item in workNodes]))
-
-
 def addSessions():
+    """
+    添加session功能入口
+    """
     if ArgUtils.getSessionContentInTextFormat():
-        print("\n {} Featurn is not implemented...\n".format(ColorUtils.getRedContent("✗")))
+        print("\n {} Featurn is not implemented...\n".format(
+            ColorUtils.getRedContent("✗")))
         return
     if ArgUtils.getSessionContentInJsonFormat():
-        session = json.loads(ArgUtils.getSessionContentInJsonFormat())	
+        session = json.loads(ArgUtils.getSessionContentInJsonFormat())
         SessionFileUtils.addSessionsInMap([session])
         return
     if ArgUtils.getSessionContentInFileFormat():
@@ -134,7 +68,8 @@ def addSessions():
             elif type(data) == dict:
                 SessionFileUtils.addSessionsInMap([data])
             else:
-                print("\n {} Invalid format\n".format(ColorUtils.getRedContent("✗")))  
+                print("\n {} Invalid format\n".format(
+                    ColorUtils.getRedContent("✗")))
         return
     if ArgUtils.getSessionContentInInteractiveMode():
         nodeName = input("session name: ")
@@ -144,39 +79,119 @@ def addSessions():
         password = input("password: ")
         SessionFileUtils.addSession(nodeName, ip, port, username, password)
         return
-    print("\n {} Please specify input format, usage: ssmgr.py add [-h] [-t TEXT] [-j JSON] [-i] [-f FILE]\n".format(ColorUtils.getRedContent("✗")))
+    print("\n {} Please specify input format, usage: ssmgr.py add [-h] [-t TEXT] [-j JSON] [-i] [-f FILE]\n".format(
+        ColorUtils.getRedContent("✗")))
+
 
 def deleteSessions():
+    """
+    删除session功能入口
+    """
     nodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
     deletedNodeIds = SessionFileUtils.deleteSessionsMain(nodeIds)
     if deletedNodeIds:
         print("\n {} Delete sessions [{}]\n".format(
             ColorUtils.getGreenContent("✔"), ColorUtils.getGreenContent(",".join([str(item) for item in deletedNodeIds]))))
     else:
-        print("\n {} No session deleted\n".format(ColorUtils.getRedContent("✗")))
+        print("\n {} No session deleted\n".format(
+            ColorUtils.getRedContent("✗")))
 
 
-def getNodes(sessions, ids):
-    nodes = []
-    for item in sessions:
-        if item.get("nodeId") in ids:
-            nodes.append(item)
-            ids.remove(item.get("nodeId"))
-            if not ids:
-                return (nodes, ids)
-        if item.get("childNodes"):
-            (subNodes, ids) = getNodes(item.get("childNodes"), ids)
-            if subNodes:
-                nodes.extend(subNodes)
-    return (nodes, ids)
+def openSessions():
+    """
+    打开session功能入口
+    """
+    workNodes = []
+    (total, sessions) = SessionFileUtils.loadSessions()
+    # so -ns 47,48-50
+    if ArgUtils.getNodeIds():
+        targetNodeIds = parseNodeIdStr(ArgUtils.getNodeIds())
+        # print("targetNodeIds={}".format(targetNodeIds))
+        (workNodes, ids) = getSessionNodes(sessions, targetNodeIds)
+    if ids:
+        print("\n {} Cannot find the node [{}]\n".format(
+            ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join([str(item) for item in ids]))))
+        return
+    # 对目录节点不做处理
+    # workNodes = [item for item in workNodes if item.get("nodeType") == "session"]
+    # print([item.get("nodeId") for item in workNodes])
+
+    # print(workNodes)
+    if not workNodes:
+        print("\n {} No node need to be open\n".format(
+            ColorUtils.getRedContent("✗")))
+        return
+    inNewTab = ArgUtils.inNewTab()
+    inNewWindow = ArgUtils.inNewWindow()
+    # 在当前tab中打开一个session
+    if len(workNodes) == 1 and not inNewTab and not inNewWindow:
+        os.system(ExpectParamSupport.getCmd(workNodes[0]))
+        return
+    # 需要在新tab/window打开session场景，根据实际情况选择App支持
+    # support = Iterm2SessionSupport(WORK_PATH)
+    supportModule = __import__(ArgUtils.getApp() + '_session_support')
+    support = supportModule.SessionSupport(WORK_PATH)
+    openResult = support.newopen(workNodes, inNewTab, inNewWindow)
+
+    if openResult:
+        print("{} 打开{}节点成功".format(ColorUtils.getRedContent(
+            "✔"), [item.get("nodeId") for item in workNodes]))
+    else:
+        print("{} 打开{}节点失败".format(ColorUtils.getRedContent(
+            "✗"), [item.get("nodeId") for item in workNodes]))
+
+
+def listSessions():
+    """
+    展示session列表功能入口
+    """
+    (total, sessions) = SessionFileUtils.loadSessions()
+    targetSessions = sessions
+
+    targetNode = ArgUtils.getNodeId()
+    if targetNode != -1:
+        node = getNode(sessions, targetNode)
+        if node:
+            targetSessions = [node]
+            print("")
+        else:
+            print("\n {} Cannot find the node [{}]\n".format(
+                ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(targetNode)))
+            return
+
+    if len(targetSessions) == 0:
+        print("\n {} No record found...\n".format(
+            ColorUtils.getRedContent("✗")))
+        return
+    if targetNode == -1:
+        # pass
+        print(" {} Listing {} nodes...\n".format(
+            ColorUtils.getGreenContent("✔"), total))
+
+    # sl -a                     平铺展示
+    displayFuncName = getDetailDisplayContent
+    if ArgUtils.isLongFormat():
+        displayFuncName = getLongFormatDisplayContent
+
+    # if ArgUtils.isDetail():
+    #     displayFuncName = getDetailDisplayContent
+
+    # sl -l <n>                 展开到第n层
+    treePrint(targetSessions, "   ", displayFuncName)
+    print("")
 
 
 def getSessionNodes(sessions, ids):
-    '''从指定sessions中获取id在ids列表内的session'''
+    """
+    从指定sessions中获取id在ids列表内的session
+
+    :param sessions: 原始session列表
+    :param sessions: 目标sessionId列表
+    :returns: 目标session列表
+    """
     nodes = []
     for item in sessions:
         if item.get("nodeId") in ids:
-            # print("found {}".format(item.get("nodeId")))
             if item.get("nodeType") == "directory":
                 # 如果是目录，则将目录下所有session添加到nodes中
                 nodes.extend(getSubSessionNodes(item))
@@ -196,7 +211,12 @@ def getSessionNodes(sessions, ids):
 
 
 def getSubSessionNodes(parentNode):
-    '''查询某个节点下的所有子session节点'''
+    """
+    查询某个节点下的所有子session节点
+
+    :param parentNode: 父节点
+    :returns: 子session节点列表
+    """
     nodes = []
     if not parentNode.get("childNodes"):
         # 如果没有子节点直接返回空列表
@@ -212,7 +232,12 @@ def getSubSessionNodes(parentNode):
 
 
 def getNode(sessions, id):
-    '''在sessions中查询指定id的节点'''
+    """
+    在sessions中查询指定id的节点
+
+    :param id: 节点ID
+    :returns: 节点对象，如果指定ID节点不存在，则返回None
+    """
     for item in sessions:
         if item.get("nodeId") == id:
             return item
@@ -224,7 +249,13 @@ def getNode(sessions, id):
 
 
 def treePrint(nodes, prefix, func):
-    '''打印节点树'''
+    """
+    打印节点树
+
+    :param nodes: 节点列表
+    :param prefix: 显示前缀
+    :param func: 获取节点显示内容的方法
+    """
     l = len(nodes)
     for i in range(l):
         current = prefix
@@ -243,12 +274,26 @@ def treePrint(nodes, prefix, func):
 
 
 def getDisplayContent(node, prefix):
+    """
+    获取节点显示内容
+
+    :param node: 节点
+    :param prefix: 前缀
+    :returns: 节点详情显示内容
+    """    
     if node.get("nodeType") == "directory":
         return ColorUtils.getGreenContent(node.get('nodeId')) + " → " + ColorUtils.getYellowContent(node.get('nodeName'))
     return ColorUtils.getGreenContent(node.get('nodeId')) + " → " + node.get('nodeName')
 
 
 def getLongFormatDisplayContent(node, prefix):
+    """
+    获取节点显示内容(长格式)
+
+    :param node: 节点
+    :param prefix: 前缀
+    :returns: 节点详情显示内容
+    """
     if node.get('nodeType') == "session":
         # return getDisplayContent(node, prefix) + " " + node.get('ip')
         return "{} {}@{}:{}".format(getDisplayContent(node, prefix), node.get('username'), node.get('ip'), node.get('port'))
@@ -256,6 +301,13 @@ def getLongFormatDisplayContent(node, prefix):
 
 
 def getDetailDisplayContent(node, prefix):
+    """
+    获取节点显示内容(详情)
+
+    :param node: 节点
+    :param prefix: 前缀
+    :returns: 节点详情显示内容
+    """
     prefix += "     "
     if node.get('nodeType') == "session":
         return "{} \n{}{}@{}:{}".format(getDisplayContent(node, prefix), prefix, node.get('username'), node.get('ip'), node.get('port'))
@@ -263,7 +315,12 @@ def getDetailDisplayContent(node, prefix):
 
 
 def parseNodeIdStr(idStr):
-    '''解析nodeId字符串'''
+    """
+    解析nodeId字符串
+
+    :param idStr: nodeId字符串，支持连续模式(-)和多节点模式(,)
+    :returns: 节点ID列表
+    """
     nodeIds = []
     for item in idStr.split(","):
         if '-' in item:
