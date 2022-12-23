@@ -1,43 +1,69 @@
 {
     "version": "0.9.1",
-    "updateTime": 1652096276,
-    "total": 2,
+    "updateTime": 1671780276,
+    "total": 1,
     "nodes": [
         {
-            "nodeName": "Disb2",
+            "nodeName": "wsh",
             "nodeType": "directory",
             "childNodes": [
                 {
-                    "nodeName": "Disb1_1",
-                    "nodeType": "session",
-                    "ip": "10.50.135.106",
-                    "port": "22",
-                    "username": "ossuser",
-                    "password": "Huawei@Cloud8#",
-                    "jumper": {
-                        "ip": "10.50.135.106",
-                        "port": "22",
-                        "username": "ossadm",
-                        "password": "Huawei@Cloud8#",
-                        "commands": [
-                            {
-                                "expect": "$ ",
-                                "send": "su -"
-                            },
-                            {
-                                "expect": "Password",
-                                "send": "Huawei@Cloud8#"
-                            },
-                            {
-                                "expect": "# ",
-                                "send": "su - dbuser"
-                            }
-                        ]
-                    },
-                    "nodeId": 31
+                    "nodeName": "region1_10.50.135.106",
+                    "nodeType": "directory",
+                    "childNodes": [
+                        {
+                            "nodeName": "DB",
+                            "nodeType": "directory",
+                            "childNodes": [
+                                {
+                                    "nodeName": "DB01_106",
+                                    "nodeType": "session",
+                                    "ip": "10.50.135.106",
+                                    "port": "22",
+                                    "username": "ossuser",
+                                    "password": "Huawei@Cloud8#",
+                                    "proxy": "",
+                                    "jumper": {
+                                        "nodeName": "Backend_106",
+                                        "nodeType": "session",
+                                        "ip": "10.50.135.106",
+                                        "port": "22",
+                                        "username": "ossadm",
+                                        "password": "Huawei@Cloud8#",
+                                        "proxy": ""
+                                    },
+                                    "expectCmds": [
+                                        {
+                                            "expect": "]$ ",
+                                            "send": "su -",
+                                            "hide": "0"
+                                        },
+                                        {
+                                            "expect": "Password: ",
+                                            "send": "Huawei@Cloud8#",
+                                            "hide": "0"
+                                        },
+                                        {
+                                            "expect": "]# ",
+                                            "send": "su - dbuser",
+                                            "hide": "0"
+                                        },
+                                        {
+                                            "expect": "]$ ",
+                                            "send": "export HISTSIZE=1000",
+                                            "hide": "0"
+                                        }
+                                    ],
+                                    "nodeId": 4
+                                }
+                            ],
+                            "nodeId": 3
+                        }
+                    ],
+                    "nodeId": 2
                 }
             ],
-            "nodeId": 30
+            "nodeId": 1
         }
     ]
 }

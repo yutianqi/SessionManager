@@ -10,7 +10,7 @@
         "port": "22",
         "username": "ubuntu",
         "password": "_2021@NetEco",
-        "commands": [
+        "expectCmds": [
             {
                 "expect": "$ ",
                 "send": "su -"
