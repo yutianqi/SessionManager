@@ -4,9 +4,9 @@
 import os
 import sys
 import iterm2
-from expect_param_support import ExpectParamSupport
+from support.expect_param_support import ExpectParamSupport
 
-class SessionSupport():
+class Iterm2SessionSupport():
     workPath = os.path.dirname(sys.argv[0])
     nodes = []
     inNewTab = False

@@ -3,9 +3,9 @@
 
 import os
 import sys
-from color_utils import ColorUtils
+from utils.color_utils import ColorUtils
 
-class SessionSupport():
+class NativeSessionSupport():
     workPath = os.path.dirname(sys.argv[0])
     nodes = []
     iterm2 = None

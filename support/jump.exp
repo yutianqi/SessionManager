@@ -34,9 +34,12 @@ while {$idx < $argc} {
 
   while { true } {
     if {$level == 1} {
+      # puts "1st login"
       spawn ssh -p $port $user@$host
     } else {
-      send "ssh -p $port $user@$host\n"
+      # puts "2nd login"
+      # send "ssh -p $port $user@$host\n"
+      spawn ssh -p $port $user@$host
     }
     expect {
       timeout {
@@ -45,6 +48,7 @@ while {$idx < $argc} {
       }
 
       -re "\[#$] " {
+        # puts "send commands"
         # 登录成功，逐一执行命令
         if {$commandn} {
           set commandi 0
@@ -78,6 +82,7 @@ while {$idx < $argc} {
       }
 
       -re "\[Pp]assword:" {
+        # puts "send password"
         send "$password\n"
         exp_continue
       }

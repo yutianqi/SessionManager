@@ -16,6 +16,8 @@ from utils.color_utils import ColorUtils
 from utils.session_file_utils import SessionFileUtils
 from support.expect_param_support import ExpectParamSupport
 
+from support.iterm2_session_support import Iterm2SessionSupport
+from support.native_session_support import NativeSessionSupport
 
 WORK_PATH = os.path.dirname(sys.argv[0])
 VERSION = "0.9.2"
@@ -125,16 +127,20 @@ def openSessions():
     inNewWindow = ArgUtils.inNewWindow()
     # 在当前tab中打开一个session
     if len(workNodes) == 1 and not inNewTab and not inNewWindow:
-        os.system(ExpectParamSupport.getCmd(workNodes[0]))
+        cmd = ExpectParamSupport.getCmd(workNodes[0])
+        # print(cmd)
+        os.system(cmd)
         return
     # 需要在新tab/window打开session场景，根据实际情况选择App支持
-    # support = Iterm2SessionSupport(WORK_PATH)
-    supportModule = __import__(ArgUtils.getApp() + '_session_support')
-    support = supportModule.SessionSupport(WORK_PATH)
+    support = NativeSessionSupport(WORK_PATH)
+    app = ArgUtils.getApp()
+    if app == "iterm2":
+        support = Iterm2SessionSupport(WORK_PATH)
+    
     openResult = support.newopen(workNodes, inNewTab, inNewWindow)
 
     if openResult:
-        print("{} 打开{}节点成功".format(ColorUtils.getRedContent(
+        print("{} 打开{}节点成功".format(ColorUtils.getGreenContent(
             "✔"), [item.get("nodeId") for item in workNodes]))
     else:
         print("{} 打开{}节点失败".format(ColorUtils.getRedContent(
