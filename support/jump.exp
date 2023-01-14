@@ -38,8 +38,8 @@ while {$idx < $argc} {
       spawn ssh -p $port $user@$host
     } else {
       # puts "2nd login"
-      # send "ssh -p $port $user@$host\n"
-      spawn ssh -p $port $user@$host
+      send "ssh -p $port $user@$host\n"
+      # spawn ssh -p $port $user@$host
     }
     expect {
       timeout {
