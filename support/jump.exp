@@ -15,8 +15,10 @@ set level 1
 
 #trap sigwinch spawned
 trap {
-  set cols [stty columns]
-  set cols [stty columns]
+  echo "resize"
+  set columns [stty columns]
+  set rows [stty rows]
+  echo "resize, rows="$rows", columns="$columns
   stty rows $rows columns $cols < $spawn_out(slave,name)
 } WINCH
 
