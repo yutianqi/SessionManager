@@ -13,6 +13,13 @@ set idx 0
 # 初始层级置为1
 set level 1
 
+#trap sigwinch spawned
+trap {
+  set cols [stty columns]
+  set cols [stty columns]
+  stty rows $rows columns $cols < $spawn_out(slave,name)
+} WINCH
+
 # 遍历参数，按位解析
 while {$idx < $argc} {
   # puts "loop begion level=$level"
