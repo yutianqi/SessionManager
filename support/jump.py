@@ -4,13 +4,13 @@ import sys
 import time
 import pexpect
 import struct
-# import fcntl
-# import termios
+import fcntl
+import termios
 import signal
 
 # jump.py ssh ubuntu 34.229.204.20 22 _2021@NetEco 0 ssh ubuntu 34.229.204.20 22 _2021@NetEco 1 "$ " "touch abc.txt"
 
-def sigwinch_passthrough (sig, data):
+def sigwinch_passthrough(sig, data):
     winsize = getwinsize()
     global child
     child.setwinsize(winsize[0],winsize[1])
@@ -24,8 +24,8 @@ def getwinsize():
     else:
         TIOCGWINSZ = 1024 # Assume
     s = struct.pack('HHHH', 0, 0, 0, 0)
-    # x = fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s)
-    # return struct.unpack('HHHH', x)[0:2]
+    x = fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s)
+    return struct.unpack('HHHH', x)[0:2]
 
 
 def login(user, passwd, host):
@@ -57,7 +57,6 @@ def login(user, passwd, host):
     pass
 
 
-
 if __name__ == '__main__':
     argvs = sys.argv
     print(argvs)
@@ -67,6 +66,8 @@ if __name__ == '__main__':
     child = None
     logFileId= open("logfile.txt", 'wb')
 
+    winsize = getwinsize()
+
     while(argvs):
         protocol = argvs.pop(0)
         username = argvs.pop(0)
@@ -75,21 +76,23 @@ if __name__ == '__main__':
         password = argvs.pop(0)
 
         if not child:
-            child = pexpect.spawn("{} -p {} {}@{}".format(protocol, port, username, host), env = {"TERM" : "xterm-256color"}, logfile=logFileId)
-    
-        signal.signal(signal.SIGWINCH, sigwinch_passthrough)
-    
-        winsize = getwinsize()
-        child.setwinsize(winsize[0], winsize[1])
-    
+            cmd = "{} -p {} {}@{}".format(protocol, port, username, host)
+            print(cmd)
+            child = pexpect.spawn(cmd, env = {"TERM" : "xterm-256color"}, logfile=logFileId)
+        child.expect('.*password:.*')
+        child.sendline(password)
+
         cmdNum = int(argvs.pop(0))
         for i in range(cmdNum):
-            expectContent = argvs.pop(0)
+            expectContent = argvs.pop(0).replace("\\\\", "\\")
+            print("expcet: " + expectContent)
             child.expect(expectContent)
+            print("send: " + sendContent)
             sendContent = argvs.pop(0)
             child.sendline(sendContent)
 
-
+    signal.signal(signal.SIGWINCH, sigwinch_passthrough)
+    child.setwinsize(winsize[0],winsize[1])
     child.interact()
     pass
 
