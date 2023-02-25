@@ -4,9 +4,11 @@ import sys
 import time
 import pexpect
 import struct
-import fcntl
-import termios
+# import fcntl
+# import termios
 import signal
+
+# jump.py ssh ubuntu 34.229.204.20 22 _2021@NetEco 0 ssh ubuntu 34.229.204.20 22 _2021@NetEco 1 "$ " "touch abc.txt"
 
 def sigwinch_passthrough (sig, data):
     winsize = getwinsize()
@@ -22,8 +24,8 @@ def getwinsize():
     else:
         TIOCGWINSZ = 1024 # Assume
     s = struct.pack('HHHH', 0, 0, 0, 0)
-    x = fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s)
-    return struct.unpack('HHHH', x)[0:2]
+    # x = fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s)
+    # return struct.unpack('HHHH', x)[0:2]
 
 
 def login(user, passwd, host):
@@ -51,15 +53,51 @@ def login(user, passwd, host):
     child.expect('.*password:.*')
     child.sendline(passwd)
 
-
     child.interact()
     pass
 
 
 
 if __name__ == '__main__':
-    user   = 'ossuser'
-    passwd = 'Huawei@Cloud8#'
-    host   = '120.46.207.204'
+    argvs = sys.argv
+    print(argvs)
+    fileName = argvs.pop(0)
+    print(fileName)
 
-    login(user, passwd, host)
+    child = None
+    logFileId= open("logfile.txt", 'wb')
+
+    while(argvs):
+        protocol = argvs.pop(0)
+        username = argvs.pop(0)
+        host = argvs.pop(0)
+        port = argvs.pop(0)
+        password = argvs.pop(0)
+
+        if not child:
+            child = pexpect.spawn("{} -p {} {}@{}".format(protocol, port, username, host), env = {"TERM" : "xterm-256color"}, logfile=logFileId)
+    
+        signal.signal(signal.SIGWINCH, sigwinch_passthrough)
+    
+        winsize = getwinsize()
+        child.setwinsize(winsize[0], winsize[1])
+    
+        cmdNum = int(argvs.pop(0))
+        for i in range(cmdNum):
+            expectContent = argvs.pop(0)
+            child.expect(expectContent)
+            sendContent = argvs.pop(0)
+            child.sendline(sendContent)
+
+
+    child.interact()
+    pass
+
+
+
+    # user   = 'ossuser'
+    # passwd = 'Huawei@Cloud8#'
+    # host   = '120.46.207.204'
+    # login(user, passwd, host)
+
+

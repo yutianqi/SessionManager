@@ -4,11 +4,9 @@ import sys
 import time
 import pexpect
 import struct
-# import fcntl
-# import termios
+import fcntl
+import termios
 import signal
-
-# expect /home/ubuntu/code/SessionManager/support/test.exp ssh ubuntu 34.229.204.20 22 _2021@NetEco 0 ssh ubuntu 34.229.204.20 22 _2021@NetEco 1 "$ " "touch abc.txt"
 
 def sigwinch_passthrough (sig, data):
     winsize = getwinsize()
@@ -24,8 +22,8 @@ def getwinsize():
     else:
         TIOCGWINSZ = 1024 # Assume
     s = struct.pack('HHHH', 0, 0, 0, 0)
-    # x = fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s)
-    # return struct.unpack('HHHH', x)[0:2]
+    x = fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s)
+    return struct.unpack('HHHH', x)[0:2]
 
 
 def login(user, passwd, host):
@@ -53,33 +51,15 @@ def login(user, passwd, host):
     child.expect('.*password:.*')
     child.sendline(passwd)
 
+
     child.interact()
     pass
 
 
 
 if __name__ == '__main__':
-    argvs = sys.argv
-    print(argvs)
-    fileName = argvs.pop(0)
-    print(fileName)
+    user   = 'ossuser'
+    passwd = 'Huawei@Cloud8#'
+    host   = '120.46.207.204'
 
-    while(argvs):
-        protocol = argvs.pop(0)
-        username = argvs.pop(0)
-        host = argvs.pop(0)
-        port = argvs.pop(0)
-        password = argvs.pop(0)
-        print("{} -p {} {}@{}".format(protocol, port, username, host))
-        cmdNum = int(argvs.pop(0))
-        for i in range(cmdNum):
-            expectContent = argvs.pop(0)
-            sendContent = argvs.pop(0)
-
-
-    # user   = 'ossuser'
-    # passwd = 'Huawei@Cloud8#'
-    # host   = '120.46.207.204'
-    # login(user, passwd, host)
-
-
+    login(user, passwd, host)
