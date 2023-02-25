@@ -29,12 +29,8 @@ def getwinsize():
 def login(user, passwd, host):
     print('ssh ' + user + '@' + host + ' ...')
     
-    time.sleep(1)
-
-
     logFileId= open("logfile.txt", 'wb')
 
-        
     child = pexpect.spawn('ssh ' + user + '@' + host , env = {"TERM" : "xterm-256color"}, logfile=logFileId)
     
     signal.signal(signal.SIGWINCH, sigwinch_passthrough)
@@ -47,10 +43,10 @@ def login(user, passwd, host):
 
     # child.interact()
     
-    
-    child.expect('ubuntu@ip-172-31-87-112:~$')
-    print("ssh ubuntu@54.82.85.66")
-    child.sendline("ssh ubuntu@54.82.85.66")
+    child.expect('~]\$')
+    cmd = "ssh ossadm@127.0.0.1"
+    print(cmd)
+    child.sendline(cmd)
 
     child.expect('.*password:.*')
     child.sendline(passwd)
@@ -62,8 +58,8 @@ def login(user, passwd, host):
 
 
 if __name__ == '__main__':
-    user   = 'ubuntu'
-    passwd = '_2021@NetEco98842674'
-    host   = '54.82.85.66'
+    user   = 'ossuser'
+    passwd = 'Huawei@Cloud8#'
+    host   = '120.46.207.204'
 
     login(user, passwd, host)
