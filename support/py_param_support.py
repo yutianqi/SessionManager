@@ -18,7 +18,7 @@ class PyParamSupport():
         :param node: 节点对象
         :returns: expect命令字符串
         """
-        return "expect {} {}\n".format(os.path.join(cls.workPath, "support", "jump.exp"), " ".join(cls.getParamsFromNode(node)))
+        return "python3 {} {}\n".format(os.path.join(cls.workPath, "support", "jump.py"), " ".join(cls.getParamsFromNode(node)))
 
 
     @classmethod
@@ -77,5 +77,5 @@ if __name__ == "__main__":
                 }"""
     node = json.loads(rawJson)
     # expect t.exp ssh ossuser 10.50.135.106 22 "Huawei@Cloud8#" 0 ssh ossadm 10.50.135.106 22 "Huawei@Cloud8#" 6 "$ " "su -" "Password" "Huawei@Cloud8#" "# " "su - dbuser"
-    print(ExpectParamSupport.getCmd(node))
+    print(PyParamSupport.getCmd(node))
 

@@ -5,7 +5,7 @@
 # Purpose:      Management sessions
 # Author:       Yu Tianqi <ytq0415@gmail.com>
 # Created:      2022.05.05 00:20:37
-# Version:      0.9.2
+# Version:      0.9.3
 
 import sys
 import os
@@ -15,6 +15,7 @@ from utils.arg_utils import ArgUtils
 from utils.color_utils import ColorUtils
 from utils.session_file_utils import SessionFileUtils
 from support.expect_param_support import ExpectParamSupport
+from support.py_param_support import PyParamSupport
 
 from support.iterm2_session_support import Iterm2SessionSupport
 from support.native_session_support import NativeSessionSupport
@@ -127,7 +128,8 @@ def openSessions():
     inNewWindow = ArgUtils.inNewWindow()
     # 在当前tab中打开一个session
     if len(workNodes) == 1 and not inNewTab and not inNewWindow:
-        cmd = ExpectParamSupport.getCmd(workNodes[0])
+        # cmd = ExpectParamSupport.getCmd(workNodes[0])
+        cmd = PyParamSupport.getCmd(workNodes[0])
         # print(cmd)
         os.system(cmd)
         return

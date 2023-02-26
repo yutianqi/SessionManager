@@ -5,6 +5,7 @@ import os
 import sys
 import iterm2
 from support.expect_param_support import ExpectParamSupport
+from support.py_param_support import PyParamSupport
 
 class Iterm2SessionSupport():
     workPath = os.path.dirname(sys.argv[0])
@@ -86,6 +87,8 @@ class Iterm2SessionSupport():
 
         # Execute the command - could be telnet, ssh etc...
         # await session.async_send_text("ssh ossuser@" + item.get('ip') + "\n")
-        await session.async_send_text(ExpectParamSupport.getCmd(item))
+        # await session.async_send_text(ExpectParamSupport.getCmd(item))
+        await session.async_send_text(PyParamSupport.getCmd(item))
+
 
 
