@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# encoding=utf8
 
 from utils.arg_utils import ArgUtils
 from utils.color_utils import ColorUtils
@@ -16,6 +18,9 @@ class SessionLister():
         targetSessions = sessions
 
         targetNode = ArgUtils.getNodeId()
+
+        print("targetNode" + str(targetNode))
+
         if targetNode != -1:
             node = getNode(sessions, targetNode)
             if node:

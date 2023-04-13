@@ -26,19 +26,7 @@ class SessionFileUtils():
         return (sessions.get("total"), sessions.get("nodes"))
 
     @classmethod
-    def addSession(cls, nodeName, ip, port, username, password):
-        session = {
-            "nodeName": nodeName,
-            "nodeType": "session",
-            "ip": ip,
-            "port": port,
-            "username": username,
-            "password": password
-        }
-        cls.addSessionsInMap([session])
-        
-    @classmethod
-    def addSessionsInMap(cls, sessions):
+    def addSessions(cls, sessions):
         for session in sessions:
             cls.arrangeNodeId(session)
         rowJson = cls.getRowJson()
@@ -48,16 +36,16 @@ class SessionFileUtils():
         cls.saveSessionsToFile()
 
     @classmethod
-    def deleteSessionsMain(cls, ids):
+    def deleteSessions(cls, ids):
         rowJson = cls.getRowJson()
-        deletedNodeIds = cls.deleteSessions(rowJson.get("nodes"), ids)
+        deletedNodeIds = cls.executeSessionDelete(rowJson.get("nodes"), ids)
         rowJson["updateTime"] = int(time.time())
         rowJson["total"] = cls.getTotal(rowJson.get("nodes"))
         cls.saveSessionsToFile()
         return deletedNodeIds
 
     @classmethod
-    def deleteSessions(cls, nodes, ids):
+    def executeSessionDelete(cls, nodes, ids):
         deletedNodeIds = []
         for item in nodes[::-1]:
             if item.get("nodeId") in ids:
@@ -65,7 +53,7 @@ class SessionFileUtils():
                 deletedNodeIds.append(item.get("nodeId"))
                 continue
             if item.get("childNodes"):
-                childDeletedNodeIds = cls.deleteSessions(item.get("childNodes"), ids)
+                childDeletedNodeIds = cls.executeSessionDelete(item.get("childNodes"), ids)
                 if childDeletedNodeIds:
                     deletedNodeIds.extend(childDeletedNodeIds)
         return deletedNodeIds

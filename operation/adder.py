@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# encoding=utf8
 
 from utils.arg_utils import ArgUtils
 from utils.color_utils import ColorUtils
@@ -17,7 +19,7 @@ class SessionAdder():
             return
         if ArgUtils.getSessionContentInJsonFormat():
             session = json.loads(ArgUtils.getSessionContentInJsonFormat())
-            SessionSupport.addSessionsInMap([session])
+            SessionSupport.addSessions([session])
             return
         if ArgUtils.getSessionContentInFileFormat():
             fileName = ArgUtils.getSessionContentInFileFormat()
@@ -25,9 +27,9 @@ class SessionAdder():
                 lines = f.readlines()
                 data = json.loads("".join(lines))
                 if type(data) == list:
-                    SessionSupport.addSessionsInMap(data)
+                    SessionSupport.addSessions(data)
                 elif type(data) == dict:
-                    SessionSupport.addSessionsInMap([data])
+                    SessionSupport.addSessions([data])
                 else:
                     print("\n {} Invalid format\n".format(
                         ColorUtils.getRedContent("✗")))

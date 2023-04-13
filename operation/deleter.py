@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# encoding=utf8
 
 from utils.arg_utils import ArgUtils
 from utils.color_utils import ColorUtils
@@ -12,7 +14,7 @@ class SessionDeleter():
         删除session功能入口
         """
         nodeIds = ArgUtils.parseNodeIdStr(ArgUtils.getNodeIds())
-        deletedNodeIds = SessionSupport.deleteSessionsMain(nodeIds)
+        deletedNodeIds = SessionSupport.deleteSessions(nodeIds)
         if deletedNodeIds:
             print("\n {} Delete sessions [{}]\n".format(
                 ColorUtils.getGreenContent("✔"), ColorUtils.getGreenContent(",".join([str(item) for item in deletedNodeIds]))))

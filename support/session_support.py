@@ -1,10 +1,12 @@
-
+#!/usr/bin/env python3
+# encoding=utf8
 
 from utils.session_file_utils import SessionFileUtils
 
-
-
 class SessionSupport():
+    """
+    Session管理
+    """
 
     def getSessionNodes(sessions, ids):
         """
@@ -72,19 +74,26 @@ class SessionSupport():
         return None
 
     @classmethod
-    def addSessionsInMap(cls, sessions):
-        SessionFileUtils.addSessionsInMap(sessions)
+    def addSession(cls, nodeName, ip, port, username, password):
+        session = {
+            "nodeName": nodeName,
+            "nodeType": "session",
+            "ip": ip,
+            "port": port,
+            "username": username,
+            "password": password
+        }
+        cls.addSessions([session])
 
     @classmethod
-    def addSession(cls, nodeName, ip, port, username, password):
-        SessionFileUtils.addSession(nodeName, ip, port, username, password)
-
+    def addSessions(cls, sessions):
+        SessionFileUtils.addSessions(sessions)
 
     @classmethod
     def loadSessions(cls):
         return SessionFileUtils.loadSessions()
     
     @classmethod 
-    def deleteSessionsMain(cls, nodeIds):
-        return SessionFileUtils.deleteSessionsMain(nodeIds)
+    def deleteSessions(cls, nodeIds):
+        return SessionFileUtils.deleteSessions(nodeIds)
 

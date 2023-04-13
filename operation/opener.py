@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# encoding=utf8
 
 from utils.arg_utils import ArgUtils
 from utils.color_utils import ColorUtils
