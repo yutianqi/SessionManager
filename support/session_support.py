@@ -67,7 +67,7 @@ class SessionSupport():
             if item.get("nodeId") in nodeIds:
                 if item.get("nodeType") == "directory":
                     # 如果是目录，则将目录下所有session添加到nodes中
-                    nodes.extend(getSubSessionNodes(item))
+                    nodes.extend(cls.getSubSessionNodes(item))
                 else:
                     # 如果是session，则该session添加到nodes中
                     nodes.append(item)
@@ -100,7 +100,7 @@ class SessionSupport():
                 nodes.append(node)
                 continue
             # 如果子节点是目录，则继续查询该目录下的子节点
-            nodes.extend(getSubSessionNodes(node))
+            nodes.extend(cls.getSubSessionNodes(node))
         return nodes
 
     @classmethod
