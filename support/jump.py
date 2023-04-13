@@ -63,7 +63,14 @@ def execute(argvs):
             child.sendline(cmd)
 
         # 如果之前已登录过，会提示输入password，如果之前没登录过，需要确认信任
-        ret = child.expect(['.*password:.*', '.*yes/no.*'])
+
+
+        try:
+            ret = child.expect(['.*password:.*', '.*yes/no.*'])
+        except pexpect.exceptions.TIMEOUT:
+            print("timeout")
+            return
+
         if ret == 0:
             child.sendline(password)
         else:
