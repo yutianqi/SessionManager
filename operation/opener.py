@@ -40,14 +40,14 @@ class SessionOpener():
         inNewTab = ArgUtils.inNewTab()
         inNewWindow = ArgUtils.inNewWindow()
 
-        print("workNodes=" + str(workNodes))
-        print("inNewTab=" + str(inNewTab))
-        print("inNewWindow=" + str(inNewWindow))
+        # print("workNodes=" + str(workNodes))
+        # print("inNewTab=" + str(inNewTab))
+        # print("inNewWindow=" + str(inNewWindow))
         # 在当前tab中打开一个session
         if len(workNodes) == 1 and not inNewTab and not inNewWindow:
             # cmd = ExpectParamSupport.getCmd(workNodes[0])
             cmd = PyParamSupport.getCmd(workNodes[0])
-            print(cmd)
+            # print(cmd)
             os.system(cmd)
             return
         # 需要在新tab/window打开session场景，根据实际情况选择App支持

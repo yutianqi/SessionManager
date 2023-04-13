@@ -18,8 +18,7 @@ class SessionLister():
         targetSessions = sessions
 
         targetNode = ArgUtils.getNodeId()
-
-        print("targetNode" + str(targetNode))
+        # print("targetNode" + str(targetNode))
 
         if targetNode != -1:
             node = SessionSupport.getNode(sessions, targetNode)
