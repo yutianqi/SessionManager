@@ -13,7 +13,7 @@ class SessionLister():
         """
         展示session列表功能入口
         """
-        (total, sessions) = SessionSupport.loadSessions()
+        (total, sessions) = SessionSupport.getSessions()
         
         targetSessions = sessions
 
@@ -22,7 +22,7 @@ class SessionLister():
         print("targetNode" + str(targetNode))
 
         if targetNode != -1:
-            node = getNode(sessions, targetNode)
+            node = SessionSupport.getNode(sessions, targetNode)
             if node:
                 targetSessions = [node]
                 print("")

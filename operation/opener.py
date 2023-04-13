@@ -16,7 +16,7 @@ class SessionOpener():
         打开session功能入口
         """
         workNodes = []
-        (total, sessions) = SessionSupport.loadSessions()
+        (total, sessions) = SessionSupport.getSessions()
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
             targetNodeIds = ArgUtils.parseNodeIdStr(ArgUtils.getNodeIds())

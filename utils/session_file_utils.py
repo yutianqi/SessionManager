@@ -38,14 +38,14 @@ class SessionFileUtils():
     @classmethod
     def deleteSessions(cls, ids):
         rowJson = cls.getRowJson()
-        deletedNodeIds = cls.executeSessionDelete(rowJson.get("nodes"), ids)
+        deletedNodeIds = cls.deleteSessionRecursively(rowJson.get("nodes"), ids)
         rowJson["updateTime"] = int(time.time())
         rowJson["total"] = cls.getTotal(rowJson.get("nodes"))
         cls.saveSessionsToFile()
         return deletedNodeIds
 
     @classmethod
-    def executeSessionDelete(cls, nodes, ids):
+    def deleteSessionRecursively(cls, nodes, ids):
         deletedNodeIds = []
         for item in nodes[::-1]:
             if item.get("nodeId") in ids:
@@ -53,7 +53,7 @@ class SessionFileUtils():
                 deletedNodeIds.append(item.get("nodeId"))
                 continue
             if item.get("childNodes"):
-                childDeletedNodeIds = cls.executeSessionDelete(item.get("childNodes"), ids)
+                childDeletedNodeIds = cls.deleteSessionRecursively(item.get("childNodes"), ids)
                 if childDeletedNodeIds:
                     deletedNodeIds.extend(childDeletedNodeIds)
         return deletedNodeIds
