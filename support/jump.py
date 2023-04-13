@@ -82,9 +82,10 @@ def execute(argvs):
     child.interact()
     pass
 
-
+print(__name__)
 if __name__ == '__main__':
     argvs = sys.argv
+    print(argvs)
     fileName = argvs.pop(0)
-    # print(fileName)
+    print(fileName)
     execute(argvs)

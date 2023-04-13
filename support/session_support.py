@@ -77,7 +77,7 @@ class SessionSupport():
                 continue
             # 如果当前节点id不在nodeIds中，但是包含子节点，则在自节点中继续查找
             if item.get("childNodes"):
-                (subNodes, nodeIds) = getSessionNodes(item.get("childNodes"), nodeIds)
+                (subNodes, nodeIds) = cls.getSessionNodes(item.get("childNodes"), nodeIds)
                 if subNodes:
                     nodes.extend(subNodes)
         return (nodes, nodeIds)
