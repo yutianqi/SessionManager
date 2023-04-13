@@ -18,13 +18,17 @@ child = None
 
 
 def sigwinch_passthrough(sig, data):
+    """
+    窗口表更事件回调方法
+    """
     winsize = getwinsize()
     global child
     child.setwinsize(winsize[0], winsize[1])
 
 
 def getwinsize():
-    """This returns the window size of the child tty.
+    """
+    This returns the window size of the child tty.
     The return value is a tuple of (rows, cols).
     """
     if 'TIOCGWINSZ' in dir(termios):
@@ -37,6 +41,9 @@ def getwinsize():
 
 
 def execute(argvs):
+    """
+    执行入口
+    """
     global child
     while(argvs):
         protocol = argvs.pop(0)
@@ -46,16 +53,16 @@ def execute(argvs):
         password = argvs.pop(0)
 
         cmd = """{} -p {} {}@{}""".format(protocol, port, username, host)
+        # print(cmd)
         if not child:
-            # print(cmd)
             # child = pexpect.spawn(cmd, env = {"TERM" : "xterm-256color"}, logfile=open("logfile.txt", 'w'), encoding='utf-8')
             child = pexpect.spawn(
                 cmd, env={"TERM": "xterm-256color"}, logfile=sys.stdout, encoding='utf-8')
         else:
             child.expect('\$.*')
-            # print(cmd)
             child.sendline(cmd)
 
+        # 如果之前已登录过，会提示输入password，如果之前没登录过，需要确认信任
         ret = child.expect(['.*password:.*', '.*yes/no.*'])
         if ret == 0:
             child.sendline(password)
@@ -64,6 +71,7 @@ def execute(argvs):
             ret = child.expect(['.*password:.*', '.*yes/no.*'])
             child.sendline(password)
 
+        # 执行子命令
         subCmdNum = int(argvs.pop(0))
         for i in range(subCmdNum):
             # print(i)
@@ -74,6 +82,7 @@ def execute(argvs):
             # print("send: " + sendContent)
             child.sendline(sendContent)
 
+
     winsize = getwinsize()
     child.setwinsize(winsize[0], winsize[1])
     signal.signal(signal.SIGWINCH, sigwinch_passthrough)
@@ -82,10 +91,9 @@ def execute(argvs):
     child.interact()
     pass
 
-print(__name__)
+
 if __name__ == '__main__':
     argvs = sys.argv
-    print(argvs)
+    # print(argvs)
     fileName = argvs.pop(0)
-    print(fileName)
     execute(argvs)
