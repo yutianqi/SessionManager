@@ -91,3 +91,21 @@ class ArgUtils():
     @classmethod
     def isShowVersion(cls):
         return cls.args.version
+
+    @classmethod
+    def parseNodeIdStr(cls, idStr):
+        """
+        解析nodeId字符串
+
+        :param idStr: nodeId字符串，支持连续模式(-)和多节点模式(,)
+        :returns: 节点ID列表
+        """
+        nodeIds = []
+        for item in idStr.split(","):
+            if '-' in item:
+                begin = int(item.split("-")[0])
+                end = int(item.split("-")[1]) + 1
+                nodeIds.extend([i for i in range(begin, end)])
+            else:
+                nodeIds.append(int(item))
+        return nodeIds
