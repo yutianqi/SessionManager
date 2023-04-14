@@ -34,14 +34,10 @@ class SessionAdder():
                     print("\n {} Invalid format\n".format(
                         ColorUtils.getRedContent("✗")))
             return
-        if ArgUtils.getSessionContentInInteractiveMode():
-            nodeName = input("session name: ")
-            ip = input("ip: ")
-            port = input("port: ")
-            username = input("username: ")
-            password = input("password: ")
-            SessionSupport.addSession(nodeName, ip, port, username, password)
 
-            return
-        print("\n {} Please specify input format, usage: ssmgr.py add [-h] [-t TEXT] [-j JSON] [-i] [-f FILE]\n".format(
-            ColorUtils.getRedContent("✗")))
+        nodeName = input("session name: ")
+        ip = input("ip: ")
+        port = input("port: ")
+        username = input("username: ")
+        password = input("password: ")
+        SessionSupport.addSession(nodeName, ip, port, username, password)
