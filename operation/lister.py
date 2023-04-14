@@ -42,7 +42,7 @@ class SessionLister():
         # sl -a                     平铺展示
         displayFuncName = cls.getDetailDisplayContent
         if ArgUtils.isLongFormat():
-            displayFuncName = getLongFormatDisplayContent
+            displayFuncName = cls.getLongFormatDisplayContent
 
         # if ArgUtils.isDetail():
         #     displayFuncName = getDetailDisplayContent
@@ -101,7 +101,7 @@ class SessionLister():
         """
         if node.get('nodeType') == "session":
             # return getDisplayContent(node, prefix) + " " + node.get('ip')
-            return "{} {}@{}:{}".format(getDisplayContent(node, prefix), node.get('username'), node.get('ip'), node.get('port'))
+            return "{} {}@{}:{}".format(cls.getDisplayContent(node, prefix), node.get('username'), node.get('ip'), node.get('port'))
         return cls.getDisplayContent(node, prefix)
 
     @classmethod
