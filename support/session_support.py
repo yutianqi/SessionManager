@@ -45,23 +45,20 @@ class SessionSupport():
         return SessionFileUtils.deleteSessions(nodeIds)
 
     @classmethod
-    def getSessions(cls):
+    def getNodes(cls, sessions=[], nodeIds=[]):
         """
-        获取Session数据
+        从指定Sessions中查询指定ID的Session列表
 
-        :return (总数, SessionMap)
+        :param sessions: Session列表
+        :param sessions: 目标节点Id列表
+        :returns: 目标Session列表
         """
-        return SessionFileUtils.loadSessions()
-
-    @classmethod
-    def getSessionNodes(cls, sessions, nodeIds):
-        """
-        从指定sessions中获取id在ids列表内的session
-
-        :param sessions: 原始session列表
-        :param sessions: 目标sessionId列表
-        :returns: 目标session列表
-        """
+        # 如果未指定Session列表，则默认从全量Session中查找
+        if not sessions:
+            (total, sessions) = SessionFileUtils.loadSessions()
+        # 如果未指定目标节点ID列表，则默认返回全量Session列表
+        if not nodeIds:
+            return (sessions, [])
         nodes = []
         for item in sessions:
             if item.get("nodeId") in nodeIds:
@@ -77,10 +74,38 @@ class SessionSupport():
                 continue
             # 如果当前节点id不在nodeIds中，但是包含子节点，则在自节点中继续查找
             if item.get("childNodes"):
-                (subNodes, nodeIds) = cls.getSessionNodes(item.get("childNodes"), nodeIds)
+                (subNodes, nodeIds) = cls.getNodes(item.get("childNodes"), nodeIds)
                 if subNodes:
                     nodes.extend(subNodes)
         return (nodes, nodeIds)
+
+    @classmethod
+    def getNode(cls, sessions=[], nodeId=""):
+        """
+        从Sessions查询指定ID的节点对象
+
+        :param sessions: Session列表
+        :param sessions: 目标节点Id
+        :returns: 目标节点对象(可能是目录，也可能是session)
+        """
+        # 如果未指定Session列表，则默认从全量Session中查找
+        if not sessions:
+            (total, sessions) = SessionFileUtils.loadSessions()
+        # print(sessions)
+        # 如果未指定目标节点ID，则默认返回根Session
+        if not nodeId:
+            return sessions
+        nodes = []
+        for item in sessions:
+            if item.get("nodeId") == nodeId:
+                return item
+            if item.get("nodeType") == "session":
+                continue
+            # 继续从子节点中查找
+            ret = cls.getNode(item.get("childNodes"), nodeId)
+            if ret:
+                return ret
+        return None
 
     @classmethod
     def getSubSessionNodes(cls, parentNode):
@@ -103,22 +128,7 @@ class SessionSupport():
             nodes.extend(cls.getSubSessionNodes(node))
         return nodes
 
-    @classmethod
-    def getNode(cls, sessions, id):
-        """
-        在sessions中查询指定id的节点
 
-        :param id: 节点ID
-        :returns: 节点对象，如果指定ID节点不存在，则返回None
-        """
-        for item in sessions:
-            if item.get("nodeId") == id:
-                return item
-            if item.get("childNodes"):
-                node = cls.getNode(item.get("childNodes"), id)
-                if node:
-                    return node
-        return None
 
 
     

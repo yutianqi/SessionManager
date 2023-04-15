@@ -86,7 +86,7 @@ def execute(argvs):
             # print("send: " + sendContent)
             child.sendline(sendContent)
 
-
+    # 窗口尺寸处理，解决默认窗口较小且无法修改问题
     winsize = getwinsize()
     child.setwinsize(winsize[0], winsize[1])
     signal.signal(signal.SIGWINCH, sigwinch_passthrough)

@@ -13,31 +13,27 @@ class SessionLister():
         """
         展示session列表功能入口
         """
-        (total, sessions) = SessionSupport.getSessions()
-        
-        targetSessions = sessions
+        targetNodeIds = ArgUtils.getNodeIds()
 
-        targetNode = ArgUtils.getNodeId()
-        # print("targetNode" + str(targetNode))
+        # print("targetNodeIds=" + str(targetNodeIds))
 
-        if targetNode != -1:
-            node = SessionSupport.getNode(sessions, targetNode)
-            if node:
-                targetSessions = [node]
-                print("")
-            else:
-                print("\n {} Cannot find the node [{}]\n".format(
-                    ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(targetNode)))
+        if not targetNodeIds:
+            (sessions, ids) = targetSessions = SessionSupport.getNodes()
+            targetSessions = sessions
+        else:
+            targetNodeId = targetNodeIds[0]
+            targetSessions = [SessionSupport.getNode(sessions=[], nodeId=targetNodeId)]
+        if not targetSessions:
+            if targetNodeIds:
+                print("\n {} Cannot find the node {}\n".format(
+                    ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(targetNodeIds)))
                 return
-
-        if len(targetSessions) == 0:
-            print("\n {} No record found...\n".format(
-                ColorUtils.getRedContent("✗")))
-            return
-        if targetNode == -1:
-            # pass
-            print(" {} Listing {} nodes...\n".format(
-                ColorUtils.getGreenContent("✔"), total))
+            else:
+                print("\n {} No record found...\n".format(
+                    ColorUtils.getRedContent("✗")))
+                return
+        print(" {} Listing {} nodes...\n".format(
+            ColorUtils.getGreenContent("✔"), len(targetSessions)))
 
         # sl -a                     平铺展示
         displayFuncName = cls.getDetailDisplayContent
@@ -47,9 +43,8 @@ class SessionLister():
         # if ArgUtils.isDetail():
         #     displayFuncName = getDetailDisplayContent
 
-        # sl -l <n>                 展开到第n层
+        # print(targetSessions)
         cls.treePrint(targetSessions, "   ", displayFuncName)
-        print("")
 
 
     @classmethod

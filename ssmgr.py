@@ -5,7 +5,6 @@
 # Purpose:      Management sessions
 # Author:       Yu Tianqi <ytq0415@gmail.com>
 # Created:      2022.05.05 00:20:37
-# Version:      0.9.3
 
 import sys
 import os
@@ -26,26 +25,29 @@ def main():
     """
     入口方法
     """
-    workMode = ArgUtils.getWorkMode()
-    if "add" == workMode:
-        SessionAdder.execute()
+    try:
+        workMode = ArgUtils.getWorkMode()
+        if "add" == workMode:
+            SessionAdder.execute()
+            return
+        if "delete" == workMode:
+            SessionDeleter.execute()
+            return
+        if "open" == workMode:
+            SessionOpener.execute()
+            return
+        if "list" == workMode:
+            SessionLister.execute()
+            return
+        if ArgUtils.isShowVersion():
+            print("\nSessionManager version: {}".format(VERSION))
+        else:
+            print("\n {} Please specify the work mode first.\n".format(
+                ColorUtils.getRedContent("✗")))
+        # SessionLister.execute()
         return
-    if "delete" == workMode:
-        SessionDeleter.execute()
-        return
-    if "open" == workMode:
-        SessionOpener.execute()
-        return
-    if "list" == workMode:
-        SessionLister.execute()
-        return
-    if ArgUtils.isShowVersion():
-        print("\nSessionManager version: {}".format(VERSION))
-    else:
-        print("\n {} Please specify the work mode first.\n".format(
-            ColorUtils.getRedContent("✗")))
-    return
-
+    except KeyboardInterrupt:
+        print("")
 
 if __name__ == "__main__":
     main()

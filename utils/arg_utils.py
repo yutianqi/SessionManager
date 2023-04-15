@@ -11,7 +11,7 @@ class ArgUtils():
     subparsers = parser.add_subparsers(dest='workMode')
 
     subparserList = subparsers.add_parser('list', help='list help')
-    subparserList.add_argument("-i", "--nodeId", type=int, default=-1, help="Specify node ID")
+    subparserList.add_argument("-s", "--nodeIds", default="", help="Specify node ID")
     # subparserList.add_argument("-n", "--nodeName", default="", help="Specify node name")
     subparserList.add_argument("-l", action='store_true', default=False, help="Display in long format")
     subparserList.add_argument("-v", action='store_true', default=False, help="Show detail info")
@@ -28,7 +28,7 @@ class ArgUtils():
     # subparserAdd.add_argument("-t", "--type", default="text", choices=['text', 'json'], help="Specify the session content type")
     subparserAdd.add_argument("-t", "--text", default="", required=False, help="Add session in text format")
     subparserAdd.add_argument("-j", "--json", default="", required=False, help="Add ession in json format")
-    subparserAdd.add_argument("-i", "--interactive", action='store_true', default=False, help="Add session in interactive mode")
+    # subparserAdd.add_argument("-i", "--interactive", action='store_true', default=False, help="Add session in interactive mode")
     subparserAdd.add_argument("-f", "--file", default="", required=False, help="Add session in file format")
 
 
@@ -45,12 +45,9 @@ class ArgUtils():
         return cls.args.workMode
 
     @classmethod
-    def getNodeId(cls):
-        return cls.args.nodeId
-
-    @classmethod
     def getNodeIds(cls):
-        return cls.args.nodeIds
+        return cls.parseNodeIdStr(cls.args.nodeIds)
+        # return [1]
 
     @classmethod
     def isLongFormat(cls):
@@ -101,6 +98,8 @@ class ArgUtils():
         :returns: 节点ID列表
         """
         nodeIds = []
+        if not idStr:
+            return nodeIds
         for item in idStr.split(","):
             if '-' in item:
                 begin = int(item.split("-")[0])
