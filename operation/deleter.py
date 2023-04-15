@@ -13,7 +13,7 @@ class SessionDeleter():
         """
         删除session功能入口
         """
-        nodeIds = ArgUtils.parseNodeIdStr(ArgUtils.getNodeIds())
+        nodeIds = ArgUtils.getNodeIds()
         deletedNodeIds = SessionSupport.deleteSessions(nodeIds)
         if deletedNodeIds:
             print("\n {} Delete sessions [{}]\n".format(

@@ -35,6 +35,7 @@ class SessionAdder():
                         ColorUtils.getRedContent("✗")))
             return
 
+        # 默认为交互式创建
         nodeName = input("session name: ")
         ip = input("ip: ")
         port = input("port: ")

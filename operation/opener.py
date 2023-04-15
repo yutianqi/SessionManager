@@ -18,12 +18,11 @@ class SessionOpener():
         打开session功能入口
         """
         workNodes = []
-        (total, sessions) = SessionSupport.getSessions()
         # so -ns 47,48-50
         if ArgUtils.getNodeIds():
-            targetNodeIds = ArgUtils.parseNodeIdStr(ArgUtils.getNodeIds())
+            targetNodeIds = ArgUtils.getNodeIds()
             # print("targetNodeIds={}".format(targetNodeIds))
-            (workNodes, ids) = SessionSupport.getSessionNodes(sessions, targetNodeIds)
+            (workNodes, ids) = SessionSupport.getNodes(nodeIds=targetNodeIds)
         if ids:
             print("\n {} Cannot find the node [{}]\n".format(
                 ColorUtils.getRedContent("✗"), ColorUtils.getRedContent(",".join([str(item) for item in ids]))))
