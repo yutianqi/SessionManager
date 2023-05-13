@@ -80,7 +80,7 @@ class SessionSupport():
         return (nodes, nodeIds)
 
     @classmethod
-    def getNode(cls, sessions=[], nodeId=""):
+    def getNode(cls, nodeId="", sessions=[]):
         """
         从Sessions查询指定ID的节点对象
 
